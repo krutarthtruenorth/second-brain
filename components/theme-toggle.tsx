@@ -25,6 +25,7 @@ export function ThemeToggle() {
     <Button
       variant="outline"
       size="icon"
+      className="rounded-full border-border/60 bg-card text-primary hover:bg-cream-dark"
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >

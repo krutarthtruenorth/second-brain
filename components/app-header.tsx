@@ -3,7 +3,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 export function AppHeader() {
   return (
-    <header className="border-b border-border bg-card">
+    <header className="sticky top-0 z-10 border-b border-border/60 bg-card/95 backdrop-blur-sm">
       <div className="mx-auto flex w-full max-w-4xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <div
@@ -13,11 +13,11 @@ export function AppHeader() {
             <Brain className="size-5" />
           </div>
           <div className="min-w-0">
-            <h1 className="truncate text-xl font-semibold tracking-tight sm:text-2xl">
+            <h1 className="truncate text-xl font-semibold tracking-tight text-primary sm:text-2xl">
               Second Brain
             </h1>
             <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground sm:text-xs">
-              Personal knowledge
+              Personal Knowledge
             </p>
           </div>
         </div>

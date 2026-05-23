@@ -150,7 +150,7 @@ export function MemoryInputCard() {
 
   return (
     <div className="flex w-full flex-col gap-6">
-      <Card className="gap-0 overflow-hidden rounded-2xl border-border/60 py-0 shadow-sm">
+      <Card className="gap-0 overflow-hidden rounded-2xl border-border/60 bg-card py-0 shadow-card">
         <Tabs
           value={mode}
           onValueChange={(value) => {
@@ -175,7 +175,7 @@ export function MemoryInputCard() {
           </TabsList>
 
           <CardContent className="space-y-4 pt-4 pb-6">
-            <div className="rounded-xl bg-muted/40 p-3 dark:bg-muted/20">
+            <div className="rounded-xl bg-cream-dark/80 p-3">
               <Textarea
                 id={inputId}
                 aria-label={inputLabel}
