@@ -26,11 +26,11 @@ export default function SourceCard({ sources }: SourceCardProps) {
   if (sources.length === 0) return null;
 
   return (
-    <div className="mt-2">
+    <div className="mt-3 border-t border-white/5 pt-2">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="text-sm text-muted hover:text-primary transition-colors"
+        className="text-xs text-accent/80 hover:text-accent transition-colors"
       >
         {open ? "Hide sources" : `View sources (${sources.length})`}
       </button>
@@ -39,18 +39,17 @@ export default function SourceCard({ sources }: SourceCardProps) {
           {sources.map((source, i) => (
             <div
               key={`${source.text.slice(0, 24)}-${i}`}
-              className="rounded-input border border-border bg-background p-3 text-sm text-muted"
+              className="rounded-input border border-border bg-black/20 p-3 text-sm"
             >
               <div className="mb-2 flex items-center gap-2">
                 <span
                   className={`h-2 w-2 shrink-0 rounded-full ${relevancyColor(source.relevancy_score)}`}
-                  title={`Relevancy: ${(source.relevancy_score * 100).toFixed(0)}%`}
                 />
                 <span className="text-xs text-muted">
                   {(source.relevancy_score * 100).toFixed(0)}% match
                 </span>
               </div>
-              <p className="text-primary/90">{truncate(source.text, 120)}</p>
+              <p className="text-primary/80">{truncate(source.text, 120)}</p>
             </div>
           ))}
         </div>

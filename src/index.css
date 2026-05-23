@@ -2,16 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-background text-primary antialiased;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply border border-border bg-panel-gradient backdrop-blur-xl;
+  }
+
+  .glass-input {
+    @apply border border-border bg-black/30 backdrop-blur-sm placeholder:text-muted/70 focus:border-accent/40 focus:outline-none;
+  }
+
+  .nav-icon-btn {
+    @apply flex h-11 w-11 items-center justify-center rounded-full text-muted transition-all hover:text-accent;
+  }
+
+  .nav-icon-btn-active {
+    @apply bg-accent/15 text-accent shadow-glow;
+  }
+}
+
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeIn 0.35s ease-out;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(45, 212, 191, 0.2) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(45, 212, 191, 0.2);
+    border-radius: 4px;
   }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;

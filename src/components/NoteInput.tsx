@@ -59,36 +59,33 @@ export default function NoteInput({ open, onClose, onSaved }: NoteInputProps) {
   return (
     <>
       <div
-        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
         aria-hidden={!open}
       />
       <aside
-        className={`fixed top-0 right-0 z-50 flex h-full w-full max-w-md flex-col border-l border-border bg-surface transition-transform duration-300 ease-out ${
+        className={`fixed top-0 right-0 z-50 flex h-full w-full max-w-md flex-col glass-panel shadow-panel transition-transform duration-300 ease-out ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
         aria-hidden={!open}
       >
-        <div className="flex items-center justify-between border-b border-border px-4 py-4">
-          <h2 className="text-lg font-medium text-primary">Add Note</h2>
+        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+          <h2 className="text-lg font-semibold text-primary">Add Note</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-input px-3 py-1 text-muted hover:text-primary"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted hover:border-accent/30 hover:text-accent"
             aria-label="Close"
           >
             ✕
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="flex flex-1 flex-col gap-4 p-5">
           <div>
-            <label
-              htmlFor="note-date"
-              className="mb-1 block text-xs text-muted"
-            >
+            <label htmlFor="note-date" className="mb-1.5 block text-xs text-muted">
               Date
             </label>
             <input
@@ -96,7 +93,7 @@ export default function NoteInput({ open, onClose, onSaved }: NoteInputProps) {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full rounded-input border border-border bg-background px-3 py-2 text-sm text-primary focus:border-accent focus:outline-none"
+              className="glass-input w-full rounded-input px-3 py-2.5 text-sm text-primary"
             />
           </div>
 
@@ -104,7 +101,7 @@ export default function NoteInput({ open, onClose, onSaved }: NoteInputProps) {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Paste your note here..."
-            className="min-h-[200px] flex-1 resize-none rounded-input border border-border bg-background px-4 py-3 text-sm text-primary placeholder:text-muted focus:border-accent focus:outline-none"
+            className="glass-input min-h-[220px] flex-1 resize-none rounded-input px-4 py-3 text-sm text-primary"
           />
 
           {toast && (
@@ -121,7 +118,7 @@ export default function NoteInput({ open, onClose, onSaved }: NoteInputProps) {
             type="button"
             onClick={handleSubmit}
             disabled={loading || !text.trim()}
-            className="rounded-input bg-accent py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="rounded-input bg-accent py-3.5 text-sm font-semibold text-background transition-all hover:bg-accent-dim disabled:opacity-40"
           >
             {loading ? "Saving…" : "Remember This"}
           </button>
