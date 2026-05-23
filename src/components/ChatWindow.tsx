@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import MessageBubble, { type ChatMessage } from "./MessageBubble";
 import ChatHeader from "./ChatHeader";
+import BrainBackground from "./BrainBackground";
 
 const WELCOME: ChatMessage = {
   role: "assistant",
@@ -11,10 +12,10 @@ const WELCOME: ChatMessage = {
 
 interface ChatWindowProps {
   messages: ChatMessage[];
-  onOpenNotes?: () => void;
+  onOpenMenu?: () => void;
 }
 
-export default function ChatWindow({ messages, onOpenNotes }: ChatWindowProps) {
+export default function ChatWindow({ messages, onOpenMenu }: ChatWindowProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const displayMessages = messages.length === 0 ? [WELCOME] : messages;
 
@@ -23,10 +24,11 @@ export default function ChatWindow({ messages, onOpenNotes }: ChatWindowProps) {
   }, [messages]);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-chat-gradient">
-      <ChatHeader onOpenNotes={onOpenNotes} />
+    <div className="relative flex min-h-0 flex-1 flex-col bg-cream">
+      <BrainBackground />
+      <ChatHeader onOpenMenu={onOpenMenu} />
 
-      <div className="scrollbar-thin flex-1 overflow-y-auto px-3 py-5 sm:px-6">
+      <div className="scrollbar-thin relative z-10 flex-1 overflow-y-auto px-4 py-5 sm:px-8">
         <div className="mx-auto flex max-w-3xl flex-col gap-5">
           {displayMessages.map((msg, i) => (
             <MessageBubble

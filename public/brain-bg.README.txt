@@ -1,0 +1,11 @@
+Optional animated brain background
+
+Place your moving brain GIF here as:
+
+  public/brain-bg.gif
+
+The app loads /brain-bg.gif automatically. If the file is missing,
+an animated SVG neural-network fallback is shown instead.
+
+Recommended: square or portrait GIF, ~400-600px, low file size,
+semi-transparent orange tones on transparent/dark background.

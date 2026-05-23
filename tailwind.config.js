@@ -4,45 +4,52 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#0B0B0B",
-        surface: "#121816",
-        panel: "#0f1a18",
-        border: "rgba(45, 212, 191, 0.12)",
-        "border-strong": "rgba(45, 212, 191, 0.22)",
-        primary: "#f5f5f5",
-        muted: "#8a9a96",
-        accent: "#2dd4bf",
-        "accent-dim": "#14b8a6",
-        teal: {
-          glow: "#2dd4bf",
-          dark: "#0d3d38",
-        },
+        background: "#F5E6D8",
+        surface: "#FAF0E8",
+        cream: "#FFF8F2",
+        charcoal: "#1A1A1A",
+        border: "rgba(232, 93, 44, 0.2)",
+        primary: "#2D1810",
+        muted: "#8B6B5C",
+        accent: "#E85D2C",
+        "accent-hover": "#D14E22",
+        "accent-soft": "#F4A574",
         success: "#22c55e",
         warning: "#eab308",
         error: "#ef4444",
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["Playfair Display", "Georgia", "serif"],
       },
       borderRadius: {
         card: "20px",
         bubble: "18px",
-        input: "14px",
+        input: "16px",
         pill: "999px",
       },
       boxShadow: {
-        glow: "0 0 40px rgba(45, 212, 191, 0.08)",
-        panel: "0 8px 32px rgba(0, 0, 0, 0.4)",
+        bubble: "0 4px 20px rgba(232, 93, 44, 0.12)",
+        card: "0 8px 32px rgba(45, 24, 16, 0.08)",
       },
-      backgroundImage: {
-        "panel-gradient":
-          "linear-gradient(145deg, rgba(13, 61, 56, 0.55) 0%, rgba(11, 11, 11, 0.85) 100%)",
-        "chat-gradient":
-          "radial-gradient(ellipse at 50% 0%, rgba(20, 80, 72, 0.35) 0%, rgba(11, 11, 11, 0) 60%)",
-        "bubble-assistant":
-          "linear-gradient(135deg, rgba(20, 70, 64, 0.7) 0%, rgba(15, 45, 42, 0.85) 100%)",
-        "bubble-user":
-          "linear-gradient(135deg, rgba(45, 212, 191, 0.25) 0%, rgba(20, 184, 166, 0.15) 100%)",
+      animation: {
+        "brain-float": "brainFloat 8s ease-in-out infinite",
+        "brain-pulse": "brainPulse 3s ease-in-out infinite",
+        "orbit": "orbit 24s linear infinite",
+      },
+      keyframes: {
+        brainFloat: {
+          "0%, 100%": { transform: "translateY(0) scale(1)" },
+          "50%": { transform: "translateY(-12px) scale(1.02)" },
+        },
+        brainPulse: {
+          "0%, 100%": { opacity: "0.28" },
+          "50%": { opacity: "0.42" },
+        },
+        orbit: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
       },
     },
   },

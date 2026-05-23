@@ -4,6 +4,7 @@ interface ChatInputProps {
   onSend: (text: string) => void;
   loading: boolean;
   onAddNote?: () => void;
+  activeQuick?: string;
 }
 
 const QUICK_ACTIONS = [
@@ -14,7 +15,7 @@ const QUICK_ACTIONS = [
 ] as const;
 
 function QuickIcon({ type }: { type: string }) {
-  const cls = "h-3.5 w-3.5";
+  const cls = "h-4 w-4";
   if (type === "note")
     return (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className={cls}>
@@ -40,8 +41,14 @@ function QuickIcon({ type }: { type: string }) {
   );
 }
 
-export default function ChatInput({ onSend, loading, onAddNote }: ChatInputProps) {
+export default function ChatInput({
+  onSend,
+  loading,
+  onAddNote,
+  activeQuick = "Idea",
+}: ChatInputProps) {
   const [value, setValue] = useState("");
+  const [selectedQuick, setSelectedQuick] = useState(activeQuick);
 
   const handleSend = () => {
     const trimmed = value.trim();
@@ -58,6 +65,7 @@ export default function ChatInput({ onSend, loading, onAddNote }: ChatInputProps
   };
 
   const handleQuick = (label: string) => {
+    setSelectedQuick(label);
     if (label === "Note" && onAddNote) {
       onAddNote();
       return;
@@ -75,7 +83,7 @@ export default function ChatInput({ onSend, loading, onAddNote }: ChatInputProps
   };
 
   return (
-    <div className="shrink-0 border-t border-border bg-surface/80 px-3 py-4 backdrop-blur-md sm:px-6">
+    <div className="relative z-10 shrink-0 border-t border-border bg-cream/90 px-4 py-4 backdrop-blur-sm sm:px-8">
       <div className="mx-auto max-w-3xl">
         <div className="mb-3 flex flex-wrap gap-2">
           {QUICK_ACTIONS.map(({ label, icon }) => (
@@ -83,7 +91,9 @@ export default function ChatInput({ onSend, loading, onAddNote }: ChatInputProps
               key={label}
               type="button"
               onClick={() => handleQuick(label)}
-              className="flex items-center gap-1.5 rounded-pill border border-accent/25 bg-accent/5 px-3 py-1.5 text-xs text-accent transition-colors hover:bg-accent/10"
+              className={
+                selectedQuick === label ? "quick-pill quick-pill-active" : "quick-pill"
+              }
             >
               <QuickIcon type={icon} />
               {label}
@@ -98,18 +108,18 @@ export default function ChatInput({ onSend, loading, onAddNote }: ChatInputProps
             onKeyDown={handleKeyDown}
             placeholder="Type your message here..."
             disabled={loading}
-            rows={1}
-            className="glass-input min-h-[48px] max-h-32 flex-1 resize-none rounded-input px-4 py-3.5 text-sm text-primary disabled:opacity-50"
+            rows={2}
+            className="input-dark min-h-[52px] max-h-36 flex-1 resize-none px-4 py-3.5 text-sm"
           />
           <button
             type="button"
             onClick={handleSend}
             disabled={loading || !value.trim()}
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-background transition-all hover:bg-accent-dim hover:shadow-glow disabled:opacity-40"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-bubble transition-all hover:bg-accent-hover disabled:opacity-40"
             aria-label="Send message"
           >
             {loading ? (
-              <span className="h-5 w-5 animate-spin rounded-full border-2 border-background/30 border-t-background" />
+              <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             ) : (
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-5 w-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />

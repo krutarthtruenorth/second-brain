@@ -6,19 +6,61 @@ export interface Message {
   content: string;
 }
 
+const OPENAI_CLOUD_HOST = "api.openai.com";
+
+function usesOpenAiCloud(baseURL: string): boolean {
+  try {
+    return new URL(baseURL).host === OPENAI_CLOUD_HOST;
+  } catch {
+    return false;
+  }
+}
+
+function normalizeOpenAiBaseURL(raw: string): string {
+  const u = raw.trim().replace(/\/+$/, "");
+  if (/\/v1$/i.test(u)) return u;
+  return `${u}/v1`;
+}
+
+/** OpenAI-compatible client: OpenAI Cloud, Ollama (`/v1`), vLLM, etc. */
 function getClient(): OpenAI {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
+  const baseURL = normalizeOpenAiBaseURL(
+    process.env.OPENAI_BASE_URL?.trim() || `https://${OPENAI_CLOUD_HOST}/v1`
+  );
+
+  const cloud = usesOpenAiCloud(baseURL);
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
+
+  if (cloud && !apiKey) {
     throw new Error("OPENAI_API_KEY is not configured");
   }
-  return new OpenAI({ apiKey });
+
+  return new OpenAI({
+    apiKey: apiKey || "local-llm",
+    baseURL,
+  });
+}
+
+function chatModel(): string {
+  const explicit = process.env.OPENAI_MODEL?.trim();
+  if (explicit) return explicit;
+
+  const baseURLRaw = process.env.OPENAI_BASE_URL?.trim();
+  if (
+    baseURLRaw &&
+    !usesOpenAiCloud(normalizeOpenAiBaseURL(baseURLRaw))
+  ) {
+    return "docker.io/ai/gemma4:E2B";
+  }
+
+  return "gpt-4o-mini";
 }
 
 export async function enrichQuery(question: string): Promise<string> {
   try {
     const client = getClient();
     const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: chatModel(),
       messages: [
         {
           role: "system",
@@ -63,7 +105,7 @@ export async function synthesizeAnswer(
         : "(none)";
 
     const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: chatModel(),
       messages: [
         {
           role: "system",

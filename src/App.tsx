@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import ChatWindow from "./components/ChatWindow";
 import ChatInput from "./components/ChatInput";
 import NoteInput from "./components/NoteInput";
-import Sidebar from "./components/Sidebar";
-import NotesSidebar, { type NoteItem } from "./components/NotesSidebar";
+import Sidebar, { type NavSection } from "./components/Sidebar";
+import type { NoteItem } from "./components/NotesSidebar";
 import type { ChatMessage } from "./components/MessageBubble";
 import type { Source } from "./components/SourceCard";
 
@@ -12,8 +12,8 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [notes, setNotes] = useState<NoteItem[]>([]);
   const [notePanelOpen, setNotePanelOpen] = useState(false);
-  const [mobileNotesOpen, setMobileNotesOpen] = useState(false);
-  const [sidebarActive, setSidebarActive] = useState<"chat" | "notes">("chat");
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [navActive, setNavActive] = useState<NavSection>("chat");
 
   const refreshNotes = useCallback(async () => {
     try {
@@ -31,10 +31,7 @@ export default function App() {
     void refreshNotes();
   }, [refreshNotes]);
 
-  const openAddNote = () => {
-    setNotePanelOpen(true);
-    setMobileNotesOpen(false);
-  };
+  const openAddNote = () => setNotePanelOpen(true);
 
   const handleSend = async (question: string) => {
     const userMessage: ChatMessage = {
@@ -44,6 +41,7 @@ export default function App() {
     };
     setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
+    setNavActive("chat");
 
     const history = [...messages, userMessage].map((m) => ({
       role: m.role,
@@ -85,44 +83,36 @@ export default function App() {
     }
   };
 
+  const handleNavigate = (section: NavSection) => {
+    setNavActive(section);
+    if (section === "recall") {
+      void handleSend("What was I thinking about recently?");
+    }
+    if (section === "notes") {
+      openAddNote();
+    }
+  };
+
+  const displayMessages =
+    navActive === "saved"
+      ? messages.filter((m) => m.sources && m.sources.length > 0)
+      : messages;
+
   return (
     <div className="flex h-dvh overflow-hidden bg-background font-sans">
       <Sidebar
-        active={sidebarActive}
-        onChat={() => {
-          setSidebarActive("chat");
-          setMobileNotesOpen(false);
-        }}
-        onNotes={() => {
-          setSidebarActive("notes");
-          setMobileNotesOpen(true);
-        }}
-        onAddNote={openAddNote}
+        active={navActive}
+        noteCount={notes.length}
+        notes={notes}
+        onNavigate={handleNavigate}
+        mobileOpen={mobileSidebarOpen}
+        onMobileClose={() => setMobileSidebarOpen(false)}
       />
 
-      <NotesSidebar notes={notes} onAddNote={openAddNote} />
-
-      {mobileNotesOpen && (
-        <div className="fixed inset-0 z-30 flex md:hidden">
-          <div
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setMobileNotesOpen(false)}
-          />
-          <div className="relative z-10 ml-[72px] flex w-[calc(100%-72px)] bg-background">
-            <NotesSidebar
-              notes={notes}
-              onAddNote={openAddNote}
-              mobile
-              onClose={() => setMobileNotesOpen(false)}
-            />
-          </div>
-        </div>
-      )}
-
-      <main className="flex min-w-0 flex-1 flex-col border-l border-border">
+      <main className="flex min-w-0 flex-1 flex-col">
         <ChatWindow
-          messages={messages}
-          onOpenNotes={() => setMobileNotesOpen(true)}
+          messages={displayMessages}
+          onOpenMenu={() => setMobileSidebarOpen(true)}
         />
         <ChatInput
           onSend={handleSend}
