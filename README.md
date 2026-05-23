@@ -1,6 +1,52 @@
 # Second Brain
 
+**Live:** [https://second-brain-blue-eight.vercel.app/](https://second-brain-blue-eight.vercel.app/)
+
 **Second Brain** is the product name; this repo is **`cursorers`**. A single-user MVP web app for capturing personal memories (text or voice) and asking grounded questions later. Memories are stored and retrieved with [HydraDB](https://docs.hydradb.com/), and answers are generated with the OpenAI API.
+
+## Why not just another chatbot?
+
+Most hackathon memory apps stack LangChain, Pinecone, and a generic chat UI. Second Brain takes a narrower, production-shaped path:
+
+- **HydraDB-native** — memories go straight through `@hydradb/sdk` (`addMemory`, `verifyProcessing`, recall). No vector-store boilerplate or agent framework in the middle.
+- **Capture-first UX** — Save and Ask are separate modes with voice input, not a single endless chat thread.
+- **Grounded, cited answers** — OpenAI answers only from recalled chunks; the UI shows source IDs, titles, and relevancy scores.
+- **Indexing-aware save** — the server polls HydraDB until memories are searchable, instead of fire-and-forget uploads.
+
+It is still an MVP (single shared namespace, no auth), but the architecture is built around durable memory ingestion and retrieval—not a thin wrapper on ChatGPT.
+
+## Demo script (30 seconds)
+
+Try the [live app](https://second-brain-blue-eight.vercel.app/) or run locally with your API keys:
+
+1. Open the **Save Memory** tab.
+2. Paste: `Met Alex at the conference in Austin in March 2025. We discussed AI memory systems and planned to follow up about HydraDB.`
+3. Click **Save Memory** and wait for the success toast (indexing may take a few seconds).
+4. Switch to **Ask Question**.
+5. Ask: `Where did I meet Alex?`
+6. Confirm the answer references Austin and that **Retrieved Sources** lists matching memory chunks with scores.
+
+If recall is empty right after save, wait ~10 seconds and ask again—HydraDB indexing can lag briefly on new memories.
+
+## Screenshots
+
+**Save Memory** — capture notes via text or voice.
+
+![Save Memory tab](docs/screenshots/save-tab.png)
+
+**Ask Question** — grounded answers with cited memory chunks from HydraDB.
+
+![Ask tab with citations](docs/screenshots/ask-tab-citations.png)
+
+**Dark mode** — theme toggle via next-themes.
+
+![Dark mode](docs/screenshots/dark-mode.png)
+
+**Mobile** — responsive layout on a phone viewport.
+
+![Mobile layout](docs/screenshots/mobile.png)
+
+Regenerate with `npm run dev` running, then `npm run screenshots`.
 
 ## Stack
 
@@ -142,6 +188,7 @@ npm run dev
 | `npm run build` | Production build |
 | `npm run start` | Run production build |
 | `npm run lint` | ESLint |
+| `npm run screenshots` | Capture README screenshots with Playwright (dev server must be running) |
 
 ## API
 
