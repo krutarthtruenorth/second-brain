@@ -1,15 +1,93 @@
 # Second Brain
 
-A single-user MVP web app for capturing personal memories (text or voice) and asking grounded questions later. Memories are stored and retrieved with [HydraDB](https://docs.hydradb.com/), and answers are generated with the OpenAI API.
+**Second Brain** is the product name; this repo is **`cursorers`**. A single-user MVP web app for capturing personal memories (text or voice) and asking grounded questions later. Memories are stored and retrieved with [HydraDB](https://docs.hydradb.com/), and answers are generated with the OpenAI API.
 
 ## Stack
 
+**Next.js 16** · **React 19** · **TypeScript 5** · **Tailwind CSS 4**
+
 - **Next.js** (App Router) + **React** + **TypeScript**
 - **Tailwind CSS** + **shadcn/ui**
+- **sonner** — toast notifications
+- **next-themes** — light/dark theme
+- **lucide-react** — icons
 - **HydraDB** (`@hydradb/sdk`) for memory storage and semantic recall
 - **OpenAI** (`gpt-4o-mini`) for grounded answer generation
 - **Web Speech API** for browser voice input
 - **Zod** for request validation
+
+## Architecture
+
+The app is a single-page UI that talks to two Next.js Route Handlers. API keys stay on the server in `lib/*`; there is no database in this repo—HydraDB holds all memories.
+
+**Save flow**
+
+1. Browser → `POST /api/memories`
+2. `saveMemory()` calls HydraDB `upload.addMemory` with `sub_tenant_id: "mvp_user"` and `infer: false`
+3. The server polls `upload.verifyProcessing` for up to ~12 seconds until indexing reaches a ready status (`completed`, `graph_creation`, or `success`)
+4. Response: `{ sourceId, status, message }`
+
+**Ask flow**
+
+1. Browser → `POST /api/ask`
+2. `searchMemories()` calls HydraDB `recall.recallPreferences` (`max_results: 6`, `mode: "fast"`)
+3. `generateGroundedAnswer()` sends recalled chunks to OpenAI `gpt-4o-mini` (temperature `0.2`) with a system prompt that answers only from those memories
+4. Response: `{ answer, sources }`
+
+**Design constraints**
+
+- Secrets only on the server (Route Handlers + `lib/*`)
+- No in-repo database; HydraDB is the memory store
+- Single hardcoded sub-tenant `mvp_user` for all MVP memories
+
+```mermaid
+flowchart TB
+  subgraph client [Browser]
+    UI[app/page.tsx + components]
+  end
+  subgraph nextjs [Next.js App Router]
+    MemAPI["POST /api/memories"]
+    AskAPI["POST /api/ask"]
+  end
+  subgraph libLayer [lib]
+    Hydra[lib/hydradb.ts]
+    OAI[lib/openai.ts]
+  end
+  UI --> MemAPI
+  UI --> AskAPI
+  MemAPI --> Hydra
+  AskAPI --> Hydra
+  AskAPI --> OAI
+  Hydra --> HydraDB[(HydraDB API)]
+  OAI --> OpenAIAPI[(OpenAI API)]
+```
+
+## Project layout
+
+| Path | Role |
+| --- | --- |
+| `app/page.tsx` | Home UI (save / ask tabs) |
+| `app/api/memories/route.ts` | Save endpoint |
+| `app/api/ask/route.ts` | Ask endpoint |
+| `lib/hydradb.ts` | HydraDB client, save, recall, indexing poll |
+| `lib/openai.ts` | Grounded answer generation |
+| `lib/validation.ts` | Zod schemas (5000 / 2000 char limits) |
+| `components/` | UI (voice input, result panel, shadcn primitives) |
+
+## Features
+
+- **Save** and **Ask** tabs on one page
+- Text input with character limits (5000 for save, 2000 for ask)
+- **Voice input** via the Web Speech API (`components/voice-input.tsx`)
+- **Ask** shows the generated answer plus cited memory chunks (`components/result-panel.tsx`)
+- Light/dark theme toggle (`components/theme-toggle.tsx`)
+- Toast feedback via sonner
+
+## Prerequisites
+
+- **Node.js** 20+
+- **npm** (or a compatible package manager)
+- A [HydraDB](https://app.hydradb.com) account and an OpenAI API key
 
 ## Environment variables
 
@@ -21,6 +99,16 @@ Create a `.env.local` file (see `.env.example`):
 | `HYDRADB_API_KEY` | HydraDB API key from [app.hydradb.com](https://app.hydradb.com) |
 | `HYDRADB_PROJECT_ID` | HydraDB `tenant_id` for your workspace |
 | `HYDRADB_URL` | Optional custom API base URL (defaults to `https://api.hydradb.com`) |
+
+## HydraDB setup
+
+1. Sign up or log in at [app.hydradb.com](https://app.hydradb.com).
+2. Create or open a project/workspace.
+3. Copy the **tenant ID** into `HYDRADB_PROJECT_ID`.
+4. Create an API key and set `HYDRADB_API_KEY`.
+5. (Optional) Set `HYDRADB_URL` if you are not using the default `https://api.hydradb.com`.
+
+All MVP memories are stored under the fixed sub-tenant `mvp_user`.
 
 ## How to run locally
 
@@ -36,7 +124,7 @@ npm install
 cp .env.example .env.local
 ```
 
-3. Ensure your HydraDB tenant exists and `HYDRADB_PROJECT_ID` matches your `tenant_id`.
+3. Complete [HydraDB setup](#hydradb-setup) so `HYDRADB_PROJECT_ID` matches your tenant ID.
 
 4. Start the dev server:
 
@@ -46,10 +134,85 @@ npm run dev
 
 5. Open [http://localhost:3000](http://localhost:3000).
 
-## API routes
+### Scripts
 
-- `POST /api/memories` — body: `{ "content": "..." }` — saves a memory to HydraDB
-- `POST /api/ask` — body: `{ "question": "..." }` — recalls memories and returns `{ answer, sources }`
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Run production build |
+| `npm run lint` | ESLint |
+
+## API
+
+Validation limits (enforced in `lib/validation.ts`):
+
+- **Save**: `content` — 1–5000 characters
+- **Ask**: `question` — 1–2000 characters
+
+Errors return `{ "error": "message" }` with status `400` (validation) or `500` (server).
+
+### `POST /api/memories`
+
+Saves a memory to HydraDB and waits briefly for indexing.
+
+**Request**
+
+```bash
+curl -X POST http://localhost:3000/api/memories \
+  -H "Content-Type: application/json" \
+  -d '{"content": "Met Alex at the conference in Austin."}'
+```
+
+**Success (200)**
+
+```json
+{
+  "sourceId": "abc123",
+  "status": "completed",
+  "message": "Memory saved successfully"
+}
+```
+
+**Validation error (400)**
+
+```json
+{ "error": "Memory content cannot be empty" }
+```
+
+### `POST /api/ask`
+
+Recalls relevant memories and returns a grounded answer.
+
+**Request**
+
+```bash
+curl -X POST http://localhost:3000/api/ask \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Where did I meet Alex?"}'
+```
+
+**Success (200)**
+
+```json
+{
+  "answer": "You met Alex at a conference in Austin.",
+  "sources": [
+    {
+      "sourceId": "abc123",
+      "title": "Met Alex at the conference in Austin.",
+      "content": "Met Alex at the conference in Austin.",
+      "score": 0.92
+    }
+  ]
+}
+```
+
+**Validation error (400)**
+
+```json
+{ "error": "Question cannot be empty" }
+```
 
 ## How to deploy to Vercel
 
@@ -57,12 +220,13 @@ npm run dev
 2. Import the project in [Vercel](https://vercel.com).
 3. Add the environment variables from `.env.example` in the Vercel project settings.
 4. Deploy. No extra services are required for this MVP.
+5. **Public deploy warning**: there is no authentication. Do not expose a production URL unless you accept that anyone can read and write the shared `mvp_user` namespace—or add auth first.
 
 ## Current limitations
 
 - **No authentication** — anyone with the URL can use the app
-- **Single shared namespace** — all memories use one fixed sub-tenant (`mvp_user`)
-- **HydraDB indexing is async** — the app polls briefly after save; very new memories may need a few seconds before recall works reliably
+- **Single shared namespace** — all memories use sub-tenant `mvp_user` (see [Architecture](#architecture))
+- **Indexing delay** — save polls HydraDB briefly; recall may lag a few seconds for brand-new memories
 - **Voice input** — depends on browser support (Chrome/Edge work best; Safari support varies)
 - **No memory list/edit/delete UI** — only save and ask flows
 - **No file upload, PostgreSQL, Redis, or background jobs**
