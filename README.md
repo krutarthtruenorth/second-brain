@@ -27,11 +27,19 @@ Personal knowledge scatters across apps, docs, and half-finished notes. When you
 1. Clone the repo
 2. Copy `.env.example` to `.env` and fill in your keys
 3. `npm install`
-4. `npm run dev` — runs `vercel dev` (API on port 3000) and Vite together
-5. Open the app in the browser (Vite’s URL, usually `http://localhost:5173`)
-6. **After first deploy to Vercel:** visit `/api/setup` **once** in the browser to provision the HydraDB tenant (provisioning can take 1–2 minutes; the route polls up to ~24s and may ask you to retry)
+4. `vercel login` (once) — required for local API routes
+5. `npm start` — runs `vercel dev` on port **3000** (serves `/api` + Vite; do **not** use `npm run dev` — that name is reserved for Vite only)
+6. Open **`http://localhost:3000`** in the browser
+7. **After first deploy to Vercel:** visit `/api/setup` **once** to provision the HydraDB tenant (may take 1–2 minutes; retry if it times out)
 
-Local dev uses `vercel dev` for API routes — not a separate Node server. Vite proxies `/api` to `localhost:3000`.
+Local dev uses `vercel dev` only — not a separate Node server. `devCommand` in `vercel.json` runs Vite without re-invoking `vercel dev` (avoids recursive command errors).
+
+## Deploy to Vercel
+
+1. Push the repo to GitHub and import the project in [Vercel](https://vercel.com), or run `npx vercel` from this folder.
+2. Add environment variables in the Vercel project settings (same as `.env`).
+3. Deploy — Vercel runs `npm run build` and hosts `dist` plus `/api` routes.
+4. Visit `https://<your-app>.vercel.app/api/setup` once, then use the app URL.
 
 ## Environment variables
 
