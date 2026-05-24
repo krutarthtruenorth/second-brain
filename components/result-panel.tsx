@@ -120,12 +120,18 @@ export function ResultPanel({
                       {Math.round(source.score * 100)}% match
                     </Badge>
                   ) : null}
+                  <Badge variant="outline" className="text-xs capitalize">
+                    {source.sourceType}
+                  </Badge>
                 </div>
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   {source.content || "No content available for this chunk."}
                 </p>
                 <p className="mt-2 font-mono text-[10px] text-muted-foreground/80">
                   ID: {source.sourceId}
+                  {typeof source.metadata?.file_name === "string"
+                    ? ` · ${source.metadata.file_name}`
+                    : ""}
                 </p>
               </article>
             ))

@@ -1,17 +1,19 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import {
   Brain,
   CircleHelp,
   ClipboardList,
+  FileUp,
   Loader2,
   Save,
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { BrainPanel } from "@/components/brain-panel";
 import { ResultPanel } from "@/components/result-panel";
+import { UploadPanel } from "@/components/upload-panel";
 import { VoiceInput } from "@/components/voice-input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -31,6 +33,23 @@ const tabTriggerClassName = cn(
   "flex-1 gap-2 rounded-none border-0 py-3.5 text-muted-foreground shadow-none",
   "data-active:bg-transparent data-active:text-primary dark:data-active:bg-transparent",
   "data-active:after:h-1 data-active:after:bg-primary data-active:after:opacity-100",
+);
+
+const BrainPanel = dynamic(
+  () => import("@/components/brain-panel").then((mod) => mod.BrainPanel),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="flex min-h-64 items-center justify-center gap-2 text-sm text-muted-foreground"
+        aria-live="polite"
+        aria-busy="true"
+      >
+        <Loader2 className="size-4 animate-spin" aria-hidden />
+        Loading knowledge graph...
+      </div>
+    ),
+  },
 );
 
 type StatusState =
@@ -186,6 +205,10 @@ export function MemoryInputCard() {
               <CircleHelp className="size-4" />
               Ask Question
             </TabsTrigger>
+            <TabsTrigger value="upload" className={tabTriggerClassName}>
+              <FileUp className="size-4" />
+              Upload
+            </TabsTrigger>
             <TabsTrigger value="brain" className={tabTriggerClassName}>
               <Brain className="size-4" />
               Brain
@@ -195,6 +218,8 @@ export function MemoryInputCard() {
           <CardContent className="space-y-4 pt-4 pb-6">
             {mode === "brain" ? (
               <BrainPanel />
+            ) : mode === "upload" ? (
+              <UploadPanel />
             ) : (
               <>
                 <div className="rounded-xl bg-cream-dark/80 p-3">

@@ -1,12 +1,26 @@
 import OpenAI from "openai";
+import {
+  DEFAULT_OPENAI_ANSWER_MODEL,
+  DEFAULT_OPENAI_TRANSCRIBE_MODEL,
+} from "@/lib/constants";
 import type { MemorySource } from "@/lib/types";
 
 function getClient() {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY ?? process.env.OPENAI_APIKEY;
   if (!apiKey) {
     throw new Error("OPENAI_API_KEY is not configured");
   }
   return new OpenAI({ apiKey });
+}
+
+function getAnswerModel() {
+  return process.env.OPENAI_ANSWER_MODEL ?? DEFAULT_OPENAI_ANSWER_MODEL;
+}
+
+function getTranscribeModel() {
+  return (
+    process.env.OPENAI_TRANSCRIBE_MODEL ?? DEFAULT_OPENAI_TRANSCRIBE_MODEL
+  );
 }
 
 function formatContext(sources: MemorySource[]): string {
@@ -30,7 +44,7 @@ export async function generateGroundedAnswer(
   const context = formatContext(sources);
 
   const completion = await client.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: getAnswerModel(),
     temperature: 0.2,
     messages: [
       {
@@ -52,4 +66,25 @@ Do not invent facts. Keep answers concise and clear.`,
   }
 
   return answer;
+}
+
+export async function transcribeAudioFile(
+  file: File,
+  context?: string,
+): Promise<string> {
+  const client = getClient();
+  const transcription = await client.audio.transcriptions.create({
+    file,
+    model: getTranscribeModel(),
+    language: "en",
+    prompt: context,
+    response_format: "json",
+  });
+
+  const transcript = transcription.text.trim();
+  if (!transcript) {
+    throw new Error("OpenAI returned an empty transcription");
+  }
+
+  return transcript;
 }

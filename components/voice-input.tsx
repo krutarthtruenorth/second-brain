@@ -1,7 +1,7 @@
 "use client";
 
 import { Mic } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 
 type SpeechRecognitionConstructor = new () => SpeechRecognition;
@@ -15,6 +15,10 @@ function getSpeechRecognition(): SpeechRecognitionConstructor | null {
   };
 
   return win.SpeechRecognition ?? win.webkitSpeechRecognition ?? null;
+}
+
+function subscribeToSpeechSupport() {
+  return () => {};
 }
 
 type VoiceInputProps = {
@@ -64,13 +68,13 @@ export function VoiceInput({
   className,
 }: VoiceInputProps) {
   const [listening, setListening] = useState(false);
-  const [supported, setSupported] = useState(true);
+  const supported = useSyncExternalStore(
+    subscribeToSpeechSupport,
+    () => Boolean(getSpeechRecognition()),
+    () => true,
+  );
   const [error, setError] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-
-  useEffect(() => {
-    setSupported(Boolean(getSpeechRecognition()));
-  }, []);
 
   const stopListening = useCallback(() => {
     recognitionRef.current?.stop();
