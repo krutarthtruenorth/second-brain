@@ -16,12 +16,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const { sourceId, status } = await saveMemory(parsed.data.content);
+    const { sourceId, status, tags } = await saveMemory(parsed.data.content);
 
     return NextResponse.json<SaveMemoryResponse>({
       sourceId,
       status,
-      message: "Memory saved successfully",
+      tags,
+      message:
+        tags.length > 0
+          ? `Memory saved with tags: ${tags.join(", ")}`
+          : "Memory saved successfully",
     });
   } catch (error) {
     const message =
