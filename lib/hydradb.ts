@@ -131,7 +131,7 @@ function isHydraMetadataValue(
 ): value is string | number | boolean | string[] {
   return (
     typeof value === "string" ||
-    typeof value === "number" ||
+    (typeof value === "number" && Number.isFinite(value)) ||
     typeof value === "boolean" ||
     isHydraMetadataList(value)
   );
@@ -144,6 +144,7 @@ function sanitizeHydraMetadata(metadata: Record<string, unknown>) {
     if (
       value === null ||
       value === undefined ||
+      value === "" ||
       (Array.isArray(value) && value.length === 0)
     ) {
       continue;
@@ -284,7 +285,7 @@ export async function uploadMarkdownKnowledge(file: File, context?: string): Pro
           content_type: markdownFile.type,
           file_size: markdownFile.size,
           uploaded_at: uploadedAt,
-          context,
+          context: context || undefined,
           tags,
           tenant_id,
           sub_tenant_id,
@@ -364,7 +365,7 @@ export async function saveAudioTranscriptionMemory(options: {
           file_name: options.fileName,
           content_type: options.contentType,
           file_size: options.fileSize,
-          context,
+          context: context || undefined,
           tags,
         }),
       },
