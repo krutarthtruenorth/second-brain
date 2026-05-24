@@ -35,10 +35,10 @@
 
   DEMO (30 seconds):
   1. Open https://second-brain-blue-eight.vercel.app/
-  2. Save Memory tab → paste: "Met Alex at the conference in Austin in March 2025. We discussed AI memory systems and planned to follow up about HydraDB."
+  2. Save Memory tab → paste: "Dentist appointment June 2nd at 2pm. Do not forget to actually brush your teeth the night before."
   3. Wait for success toast (~2–4 seconds indexing)
-  4. Ask Question tab → ask: "Where did I meet Alex?"
-  5. Confirm answer references Austin. Retrieved Sources shows matching chunks with scores.
+  4. Ask Question tab → ask: "When is my dentist appointment?"
+  5. Confirm answer references June 2nd. Retrieved Sources shows matching chunk with score.
 -->
 
 <div align="center">
@@ -59,7 +59,7 @@
 
 ## The Problem
 
-Some days are dense. You're in back-to-back meetings, half-listening to a podcast on the way home, reading something interesting at midnight. You jot things down — a vendor name, a dosage your doctor mentioned, an idea that felt important at 2am.
+You write things down constantly. Days later you can't find them — and no notes app helps you ask questions, only search keywords.
 
 Three weeks later you need that thing. You search your notes app. Your email. Your camera roll. Gone.
 
@@ -94,7 +94,7 @@ Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves
 
 **Who this is for:** knowledge workers drowning in scattered notes, students managing course material, anyone whose brain moves faster than their ability to find things later.
 
-**Can it scale?:** Voice transcription uses the browser's built-in Web Speech API — zero cost at any volume. Storage and recall cost roughly $0.002 per interaction at current HydraDB and OpenAI pricing. At 10,000 daily active users the total infrastructure cost is approximately $1,300/month — comfortably covered by a $3/month subscription!
+**Why it stays cheap at scale:** Voice transcription uses the browser's built-in Web Speech API — zero cost at any volume. Storage and recall cost roughly $0.002 per interaction at current HydraDB and OpenAI pricing. At 10,000 daily active users the total infrastructure cost is approximately $1,300/month — comfortably covered by a $3/month subscription.
 
 **The bigger vision:** Today you type or speak memories manually. That's the MVP constraint. The real destination is ambient capture — a wearable that passively records what you say, hear, and do, feeding the same recall engine automatically. You'd never think to save anything. You'd just ask. The hard problem was always retrieval, not capture. Second Brain solves retrieval first. The input layer is a detail.
 
@@ -109,11 +109,11 @@ Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves
 **[→ Open the live app](https://second-brain-blue-eight.vercel.app/)**
 
 1. Open the **Save Memory** tab
-2. Paste: `Met Alex at the conference in Austin in March 2025. We discussed AI memory systems and planned to follow up about HydraDB.`
+2. Paste: `Dentist appointment June 2nd at 2pm. Do not forget to actually brush your teeth the night before.`
 3. Click **Save Memory** and wait for the success toast (indexing takes ~2–4 seconds)
 4. Switch to **Ask Question**
-5. Ask: `Where did I meet Alex?`
-6. Confirm the answer references Austin — **Retrieved Sources** lists the matching memory chunk with a relevancy score
+5. Ask: `When is my dentist appointment?`
+6. Confirm the answer references June 2nd — **Retrieved Sources** lists the matching memory chunk with a relevancy score
 
 > If recall is empty right after saving, wait ~10 seconds and ask again. HydraDB indexing can lag briefly on brand-new memories.
 
