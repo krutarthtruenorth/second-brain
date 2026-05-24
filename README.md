@@ -27,7 +27,7 @@
   - Technical Execution (25%): Two clean endpoints, TypeScript, Zod validation, indexing poll, temperature-constrained generation
   - Functional Completeness (20%): Core save→ask loop works end-to-end. Demo script below.
   - Problem-Solution Fit (20%): Personal pain point — notes written, never recalled. Solves retrieval, not storage.
-  - UX & Design (5%): Light/dark mode, voice input, responsive mobile layout, cited sources displayed
+  - UX & Design (5%): Light mode, voice input, responsive mobile layout, cited sources displayed
   - Learning & Ambition (5%): See "What We Learned" section near bottom
 
   CONSTRAINTS (MVP):
@@ -49,7 +49,6 @@
 [![HydraDB](https://img.shields.io/badge/Powered%20by-HydraDB-4A90D9?style=for-the-badge)](https://hydradb.com)
 [![OpenAI](https://img.shields.io/badge/AI-GPT--4o--mini-10A37F?style=for-the-badge)](https://openai.com)
 [![Voice Input](https://img.shields.io/badge/Input-Text%20%2B%20Voice-blueviolet?style=for-the-badge)]()
-[![MIT License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)]()
 
 [The Problem](#the-problem) • [Try It](#try-it----30-second-demo) • [How It's Built](#how-its-built) • [Vision](#the-bigger-vision) • [Why Cursor](#why-cursor-was-essential)
 
@@ -83,11 +82,6 @@ Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves
 | Sources cited with relevancy scores | ❌ | ✅ |
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_MobileImage.jpeg" width="320" alt="Mobile UI showing Save Memory tab with voice input ready — responsive layout works on phone with zero setup">
-<br><em>Mobile — save a thought in seconds, voice input ready.</em>
-</div>
-
-<div align="center">
 <img src="docs/screenshots/SecondBrain_SaveMemory_Light.png" width="49%" alt="Save Memory tab light mode — text input with 5000 char limit, voice input via Web Speech API, Save Memory button triggers HydraDB ingestion with indexing poll">&nbsp;<img src="docs/screenshots/SecondBrain_AskQuestion_Light.png" width="49%" alt="Ask Question tab light mode — grounded answer panel and Retrieved Sources section showing HydraDB memory chunks with relevancy scores, answer strictly limited to saved memories">
 <br><em>Save Memory and Ask Question — light mode.</em>
 </div>
@@ -100,6 +94,11 @@ Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves
 
 <div align="center">
 <img src="docs/screenshots/SecondBrain_Vision.svg" width="100%" alt="Vision diagram: today input is manual text and voice, future input is ambient wearable capture — the HydraDB recall engine is identical in both cases, proving the architecture scales beyond MVP">
+</div>
+
+<div align="center">
+<img src="docs/screenshots/SecondBrain_MobileImage.jpeg" width="320" alt="Mobile UI showing Save Memory tab with voice input ready — responsive layout works on phone with zero setup">
+<br><em>Mobile — save a thought in seconds, voice input ready.</em>
 </div>
 
 ---
@@ -151,10 +150,7 @@ flowchart TB
 
 **Stack:** Next.js 16 · React 19 · TypeScript 5 · Tailwind CSS 4 · shadcn/ui · HydraDB (`@hydradb/sdk`) · OpenAI `gpt-4o-mini` · Web Speech API · Zod · sonner · next-themes
 
-<div align="center">
-<img src="docs/screenshots/SecondBrain_SaveMemory_Dark.png" width="48%" alt="Save Memory tab dark mode — warm brown palette, voice input ready, character counter visible">&nbsp;&nbsp;<img src="docs/screenshots/SecondBrain_AskQuestion_Dark.png" width="48%" alt="Ask Question tab dark mode — Answer and Retrieved Sources panels ready, full light/dark theme toggle via next-themes">
-<br><em>Dark mode — theme persists across sessions via next-themes.</em>
-</div>
+
 
 ---
 
@@ -304,35 +300,24 @@ npm run dev
 
 #### `POST /api/memories`
 
-Saves a memory to HydraDB and waits briefly for indexing. Hashtags in `content` (e.g. `#conference`) are extracted into `additional_metadata.tags` and stripped from the visible text. The indexed body also appends a searchable `Tags: …` line so tag-based recall works. Each memory gets `additional_metadata.created_at` (ISO-8601 UTC) at save time.
-
 ```bash
 curl -X POST http://localhost:3000/api/memories \
   -H "Content-Type: application/json" \
-  -d '{"content": "Met Alex at the conference in Austin #conference #networking"}'
+  -d '{"content": "Met Alex at the conference in Austin in March 2025."}'
 ```
 
-Stored text: `Met Alex at the conference in Austin`. Indexed body: `Met Alex at the conference in Austin\n\nTags: conference, networking`. Metadata tags: `conference`, `networking`.
-
 ```json
-{
-  "sourceId": "abc123",
-  "status": "completed",
-  "message": "Memory saved with tags: conference, networking",
-  "tags": ["conference", "networking"]
-}
+{ "sourceId": "abc123", "status": "completed", "message": "Memory saved successfully" }
 ```
 
 Limit: 1–5000 characters. Returns `400` on validation error, `500` on server error.
 
 #### `POST /api/ask`
 
-Hashtags in `question` (e.g. `#conference`) narrow recall to memories saved with those tags. Tags are stripped from the question text but included in the semantic query; matching checks the indexed `Tags: …` line and `additional_metadata.tags`.
-
 ```bash
 curl -X POST http://localhost:3000/api/ask \
   -H "Content-Type: application/json" \
-  -d '{"question": "#conference Where did I meet Alex?"}'
+  -d '{"question": "Where did I meet Alex?"}'
 ```
 
 ```json
