@@ -45,7 +45,7 @@ export function MemoryInputCard() {
   const maxLength = mode === "save" ? MAX_SAVE_LENGTH : MAX_ASK_LENGTH;
   const placeholder =
     mode === "save"
-      ? "Type a note, idea, or fact you want to remember..."
+      ? "Type a note, idea, or fact you want to remember... Use #tags like #work #ideas"
       : "Ask a question about your saved memories...";
   const inputId = mode === "save" ? "memory-input" : "question-input";
   const inputLabel = mode === "save" ? "Memory text" : "Question text";
@@ -88,12 +88,15 @@ export function MemoryInputCard() {
         throw new Error(data.error ?? "Failed to save memory");
       }
 
+      const tagSummary =
+        data.tags.length > 0 ? ` Tags: ${data.tags.join(", ")}.` : "";
+
       setStatus({
         type: "success",
-        message: `Memory saved (ID: ${data.sourceId.slice(0, 8)}…, status: ${data.status}).`,
+        message: `Memory saved (ID: ${data.sourceId.slice(0, 8)}…, status: ${data.status}).${tagSummary}`,
       });
       setText("");
-      toast.success("Memory saved");
+      toast.success(data.message);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to save memory";

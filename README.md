@@ -201,15 +201,17 @@ Errors return `{ "error": "message" }` with status `400` (validation) or `500` (
 
 ### `POST /api/memories`
 
-Saves a memory to HydraDB and waits briefly for indexing.
+Saves a memory to HydraDB and waits briefly for indexing. Hashtags in `content` (e.g. `#conference`) are extracted into `additional_metadata.tags` and stripped from the stored text. Each memory gets `additional_metadata.created_at` (ISO-8601 UTC) at save time.
 
 **Request**
 
 ```bash
 curl -X POST http://localhost:3000/api/memories \
   -H "Content-Type: application/json" \
-  -d '{"content": "Met Alex at the conference in Austin."}'
+  -d '{"content": "Met Alex in Austin #conference #networking"}'
 ```
+
+Stored text: `Met Alex in Austin`. Metadata tags: `conference`, `networking`.
 
 **Success (200)**
 
@@ -217,7 +219,8 @@ curl -X POST http://localhost:3000/api/memories \
 {
   "sourceId": "abc123",
   "status": "completed",
-  "message": "Memory saved successfully"
+  "message": "Memory saved with tags: conference, networking",
+  "tags": ["conference", "networking"]
 }
 ```
 

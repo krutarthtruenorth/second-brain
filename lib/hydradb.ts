@@ -1,4 +1,6 @@
 import { HydraDBClient } from "@hydradb/sdk";
+import { MAX_MEMORY_TAGS } from "@/lib/constants";
+import { parseMemoryContent } from "@/lib/memory-content";
 import type { MemorySource } from "@/lib/types";
 
 const SUB_TENANT_ID = "mvp_user";
@@ -71,12 +73,30 @@ async function waitForIndexing(sourceId: string): Promise<string> {
   return "queued";
 }
 
-export async function saveMemory(content: string): Promise<{
+export async function saveMemory(rawContent: string): Promise<{
   sourceId: string;
   status: string;
+  tags: string[];
 }> {
+  const { content, tags } = parseMemoryContent(rawContent, MAX_MEMORY_TAGS);
+
+  if (!content) {
+    throw new Error(
+      "Memory content cannot be empty after removing hashtags.",
+    );
+  }
+
   const client = createClient();
   const tenantId = getTenantId();
+
+  const additional_metadata: Record<string, unknown> = {
+    app: "second-brain-mvp",
+    created_at: new Date().toISOString(),
+  };
+
+  if (tags.length > 0) {
+    additional_metadata.tags = tags;
+  }
 
   const response = await client.upload.addMemory({
     tenant_id: tenantId,
@@ -86,7 +106,7 @@ export async function saveMemory(content: string): Promise<{
         text: content,
         infer: false,
         title: content.slice(0, 80) || "Memory",
-        additional_metadata: { app: "second-brain-mvp" },
+        additional_metadata,
       },
     ],
   });
@@ -101,6 +121,7 @@ export async function saveMemory(content: string): Promise<{
   return {
     sourceId: result.source_id,
     status: indexingStatus,
+    tags,
   };
 }
 

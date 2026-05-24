@@ -9,6 +9,7 @@ export type SaveMemoryResponse = {
   sourceId: string;
   status: string;
   message: string;
+  tags: string[];
 };
 
 export type AskResponse = {
