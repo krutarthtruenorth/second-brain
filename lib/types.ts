@@ -3,6 +3,8 @@ export type MemorySource = {
   title: string | null;
   content: string;
   score: number | null;
+  sourceType: "knowledge" | "memory";
+  metadata: Record<string, unknown> | null;
 };
 
 export type SaveMemoryResponse = {
@@ -21,7 +23,23 @@ export type ApiErrorResponse = {
   error: string;
 };
 
-export type WorkspaceMode = "save" | "ask" | "brain";
+export type UploadKnowledgeResponse = {
+  sourceId: string;
+  status: string;
+  fileName: string;
+  tags: string[];
+  message: string;
+};
+
+export type AudioMemoryResponse = {
+  sourceId: string;
+  status: string;
+  transcript: string;
+  tags: string[];
+  message: string;
+};
+
+export type WorkspaceMode = "save" | "ask" | "upload" | "brain";
 
 export type BrainGraphNode = {
   id: string;
