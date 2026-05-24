@@ -116,10 +116,45 @@ function sourceIdForFile(fileName: string, content: string) {
 }
 
 function metadataWithNamespace(metadata: Record<string, unknown>) {
-  return {
+  return sanitizeHydraMetadata({
     ...metadata,
     ...getNamespaceMetadata(),
-  };
+  });
+}
+
+function isHydraMetadataList(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+function isHydraMetadataValue(
+  value: unknown,
+): value is string | number | boolean | string[] {
+  return (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    isHydraMetadataList(value)
+  );
+}
+
+function sanitizeHydraMetadata(metadata: Record<string, unknown>) {
+  const sanitized: Record<string, string | number | boolean | string[]> = {};
+
+  for (const [key, value] of Object.entries(metadata)) {
+    if (
+      value === null ||
+      value === undefined ||
+      (Array.isArray(value) && value.length === 0)
+    ) {
+      continue;
+    }
+
+    if (isHydraMetadataValue(value)) {
+      sanitized[key] = value;
+    }
+  }
+
+  return sanitized;
 }
 
 function isExistingTenantError(error: unknown): boolean {
@@ -235,13 +270,13 @@ export async function uploadMarkdownKnowledge(file: File, context?: string): Pro
     file_metadata: JSON.stringify([
       {
         file_id: sourceId,
-        metadata: {
+        metadata: sanitizeHydraMetadata({
           app: "second-brain-mvp",
           tenant_id,
           sub_tenant_id,
           source_type: "markdown",
-        },
-        additional_metadata: {
+        }),
+        additional_metadata: sanitizeHydraMetadata({
           app: "second-brain-mvp",
           source: "markdown_upload",
           source_type: "markdown",
@@ -249,11 +284,11 @@ export async function uploadMarkdownKnowledge(file: File, context?: string): Pro
           content_type: markdownFile.type,
           file_size: markdownFile.size,
           uploaded_at: uploadedAt,
-          context: context || null,
+          context,
           tags,
           tenant_id,
           sub_tenant_id,
-        },
+        }),
       },
     ]),
     upsert: true,
@@ -329,7 +364,7 @@ export async function saveAudioTranscriptionMemory(options: {
           file_name: options.fileName,
           content_type: options.contentType,
           file_size: options.fileSize,
-          context: context || null,
+          context,
           tags,
         }),
       },
