@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Brain, Loader2, RefreshCw } from "lucide-react";
+import { Brain, Info, Loader2, Network, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { BrainGraphResponse } from "@/lib/types";
@@ -21,6 +21,7 @@ export function BrainPanel() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [dimensions, setDimensions] = useState({ width: 640, height: 480 });
+  const [selectedNode, setSelectedNode] = useState<ForceGraphNode | null>(null);
 
   const fetchGraph = useCallback(async (showLoading = false) => {
     if (showLoading) {
@@ -109,7 +110,7 @@ export function BrainPanel() {
       const { width, height } = entry.contentRect;
       setDimensions({
         width: Math.max(Math.floor(width), 320),
-        height: Math.max(Math.floor(height), 320),
+        height: Math.max(Math.floor(height), 360),
       });
     });
 
@@ -120,7 +121,7 @@ export function BrainPanel() {
   if (loading) {
     return (
       <div
-        className="flex min-h-64 items-center justify-center gap-2 text-sm text-muted-foreground"
+        className="flex min-h-80 items-center justify-center gap-2 rounded-2xl border border-border/70 bg-background/80 text-sm text-muted-foreground"
         aria-live="polite"
         aria-busy="true"
       >
@@ -132,7 +133,7 @@ export function BrainPanel() {
 
   if (error) {
     return (
-      <div className="space-y-3 rounded-xl bg-cream-dark/80 p-6 text-center">
+      <div className="space-y-3 rounded-2xl border border-border/70 bg-background/80 p-6 text-center">
         <p className="text-sm text-destructive" role="alert">
           {error}
         </p>
@@ -146,7 +147,7 @@ export function BrainPanel() {
 
   if (!data?.nodes.length) {
     return (
-      <div className="space-y-3 rounded-xl bg-cream-dark/80 p-6 text-center">
+      <div className="space-y-3 rounded-2xl border border-border/70 bg-background/80 p-6 text-center">
         <Brain className="mx-auto size-8 text-primary" aria-hidden />
         <p className="text-sm text-muted-foreground">
           No graph yet. Save memories with named people, places, and
@@ -161,33 +162,56 @@ export function BrainPanel() {
   }
 
   return (
-    <div className="space-y-3">
-      <div
-        ref={containerRef}
-        className="h-[min(60vh,480px)] overflow-hidden rounded-xl bg-black"
-      >
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase text-primary">Knowledge graph</p>
+          <h3 className="mt-1 text-lg font-semibold tracking-tight text-foreground">
+            Explore connected concepts
+          </h3>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => void fetchGraph(true)}>
+          <RefreshCw className="size-3.5" aria-hidden />
+          Refresh
+        </Button>
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-[1fr_240px]">
+        <div
+          ref={containerRef}
+          className="h-[min(62vh,520px)] min-h-96 overflow-hidden rounded-2xl border border-border/70 bg-[radial-gradient(circle_at_center,oklch(0.955_0.045_68),oklch(0.995_0.012_80))]"
+        >
         <ForceGraph2D
           width={dimensions.width}
           height={dimensions.height}
           graphData={{ nodes: data.nodes, links: data.links }}
-          backgroundColor="#000000"
+          backgroundColor="rgba(255,255,255,0)"
           nodeLabel="label"
           linkLabel="label"
           linkDirectionalArrowLength={4}
           linkDirectionalArrowRelPos={1}
-          linkColor={() => "rgba(224, 122, 79, 0.55)"}
+          cooldownTicks={80}
+          onNodeClick={(node) => setSelectedNode(node as ForceGraphNode)}
+          linkColor={() => "rgba(196, 90, 47, 0.36)"}
+          linkWidth={() => 1.4}
           nodeCanvasObject={(node, ctx, globalScale) => {
             const graphNode = node as ForceGraphNode;
             const radius = graphNode.val ?? 4;
             const label = graphNode.label;
             const fontSize = Math.max(12 / globalScale, 3);
+            const isSelected = selectedNode?.id === graphNode.id;
+
+            ctx.beginPath();
+            ctx.arc(graphNode.x ?? 0, graphNode.y ?? 0, radius + (isSelected ? 4 : 0), 0, 2 * Math.PI);
+            ctx.fillStyle = isSelected ? "rgba(224, 122, 79, 0.2)" : "rgba(224, 122, 79, 0.11)";
+            ctx.fill();
 
             ctx.beginPath();
             ctx.arc(graphNode.x ?? 0, graphNode.y ?? 0, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = "#e07a4f";
+            ctx.fillStyle = graphNode.type === "document" ? "#f59e0b" : "#e07a4f";
             ctx.fill();
-            ctx.strokeStyle = "#c45a2f";
-            ctx.lineWidth = 1.5 / globalScale;
+            ctx.strokeStyle = isSelected ? "#8a3c18" : "#ffffff";
+            ctx.lineWidth = (isSelected ? 2.5 : 1.5) / globalScale;
             ctx.stroke();
 
             ctx.font = `${fontSize}px sans-serif`;
@@ -200,24 +224,61 @@ export function BrainPanel() {
             const boxY = (graphNode.y ?? 0) - fontSize / 2 - padding;
             const boxHeight = fontSize + padding * 2;
 
-            ctx.fillStyle = "rgba(60, 60, 60, 0.75)";
-            ctx.fillRect(boxX, boxY, textWidth + padding * 2, boxHeight);
+            const boxWidth = textWidth + padding * 2;
 
-            ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
+            ctx.fillStyle = isSelected
+              ? "rgba(96, 42, 16, 0.92)"
+              : "rgba(255, 255, 255, 0.88)";
+            ctx.strokeStyle = "rgba(196, 90, 47, 0.18)";
+            ctx.lineWidth = 1 / globalScale;
+            ctx.beginPath();
+            ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 6 / globalScale);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = isSelected ? "rgba(255,255,255,0.95)" : "rgba(31, 41, 55, 0.92)";
             ctx.fillText(label, boxX + padding, graphNode.y ?? 0);
           }}
         />
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+        <aside className="rounded-2xl border border-border/70 bg-background/85 p-4 shadow-sm">
+          {selectedNode ? (
+            <div className="space-y-4">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Network className="size-5" aria-hidden />
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase text-muted-foreground">Selected node</p>
+                <h4 className="mt-1 text-base font-semibold text-foreground">{selectedNode.label}</h4>
+                <p className="mt-1 text-sm text-muted-foreground capitalize">{selectedNode.type}</p>
+              </div>
+              <div className="rounded-xl bg-muted/70 p-3 text-xs leading-5 text-muted-foreground">
+                Click nearby nodes to follow the trail of related memories and documents.
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Info className="size-5" aria-hidden />
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase text-muted-foreground">Graph insight</p>
+                <h4 className="mt-1 text-base font-semibold text-foreground">Click any node</h4>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                  The explorer turns saved notes into a browsable relationship map.
+                </p>
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border/70 bg-background/70 px-4 py-3">
         <p className="text-xs text-muted-foreground">
           {data.nodes.length} entities · {data.links.length} relationships
           {data.isTruncated ? " · showing first page" : ""}
         </p>
-        <Button variant="ghost" size="sm" onClick={() => void fetchGraph(true)}>
-          <RefreshCw className="size-3.5" aria-hidden />
-          Refresh
-        </Button>
       </div>
     </div>
   );

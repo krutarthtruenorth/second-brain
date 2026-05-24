@@ -37,7 +37,7 @@ function SectionHeader({
   return (
     <div className="flex items-start gap-3">
       <div
-        className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
+        className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
         aria-hidden
       >
         <Icon className="size-4" />
@@ -195,7 +195,7 @@ export function UploadPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl bg-cream-dark/80 p-3">
+      <div className="rounded-2xl border border-border/70 bg-background/80 p-3 shadow-inner">
         <Textarea
           aria-label="Upload context and tags"
           placeholder="Optional context or #tags to attach to uploaded files and audio..."
@@ -212,7 +212,7 @@ export function UploadPanel() {
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
-        <div className="space-y-3 rounded-xl border border-border/60 bg-cream-dark/50 p-4">
+        <div className="space-y-3 rounded-2xl border border-border/70 bg-background/80 p-4 shadow-sm">
           <SectionHeader
             icon={FileText}
             title="Markdown Knowledge"
@@ -220,8 +220,8 @@ export function UploadPanel() {
           />
           <label
             className={cn(
-              "flex min-h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-background/60 p-4 text-center transition-colors",
-              "hover:bg-muted/50",
+              "flex min-h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card/70 p-4 text-center transition-all",
+              "hover:-translate-y-0.5 hover:border-primary/30 hover:bg-muted/50 hover:shadow-sm",
               isLoading && "pointer-events-none opacity-60",
             )}
           >
@@ -248,7 +248,7 @@ export function UploadPanel() {
           </label>
         </div>
 
-        <div className="space-y-3 rounded-xl border border-border/60 bg-cream-dark/50 p-4">
+        <div className="space-y-3 rounded-2xl border border-border/70 bg-background/80 p-4 shadow-sm">
           <SectionHeader
             icon={Volume2}
             title="Audio Memory"
@@ -273,7 +273,7 @@ export function UploadPanel() {
 
             <label
               className={cn(
-                "inline-flex h-10 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-2.5 text-sm font-medium transition-colors hover:bg-muted",
+                "inline-flex h-10 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2.5 text-sm font-medium transition-colors hover:bg-muted",
                 isLoading && "pointer-events-none opacity-60",
               )}
             >
@@ -296,7 +296,7 @@ export function UploadPanel() {
           </div>
 
           {recordedFile ? (
-            <div className="space-y-2 rounded-lg bg-background/60 p-3">
+            <div className="space-y-2 rounded-xl bg-muted/60 p-3">
               <p className="truncate text-xs text-muted-foreground">
                 Recording ready: {recordedFile.name}
               </p>
