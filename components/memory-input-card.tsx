@@ -16,11 +16,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { MAX_ASK_LENGTH, MAX_SAVE_LENGTH } from "@/lib/constants";
 import type { AskResponse, MemorySource, SaveMemoryResponse } from "@/lib/types";
 import { cn } from "@/lib/utils";
-
-const MAX_SAVE_LENGTH = 5000;
-const MAX_ASK_LENGTH = 2000;
 
 const tabTriggerClassName = cn(
   "flex-1 gap-2 rounded-none border-0 py-3.5 text-muted-foreground shadow-none",
