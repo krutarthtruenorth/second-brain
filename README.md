@@ -45,20 +45,19 @@
 
 <img src="docs/screenshots/SecondBrain_Banner.svg" width="100%" alt="Second Brain — personal memory recall app built on HydraDB and OpenAI. Save thoughts via text or voice, ask questions later, get grounded cited answers with no hallucination">
 
-# 🧠 Second Brain
-### *Save a thought. Ask for it later.*
-
 [![Live Demo](https://img.shields.io/badge/Live-Demo-orange?style=for-the-badge)](https://second-brain-blue-eight.vercel.app/)
 [![HydraDB](https://img.shields.io/badge/Powered%20by-HydraDB-4A90D9?style=for-the-badge)](https://hydradb.com)
 [![OpenAI](https://img.shields.io/badge/AI-GPT--4o--mini-10A37F?style=for-the-badge)](https://openai.com)
 [![Voice Input](https://img.shields.io/badge/Input-Text%20%2B%20Voice-blueviolet?style=for-the-badge)]()
 [![MIT License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)]()
 
+[The Problem](#the-problem) • [Try It](#try-it----30-second-demo) • [How It's Built](#how-its-built) • [Vision](#the-bigger-vision) • [Why Cursor](#why-cursor-was-essential)
+
 </div>
 
 ---
 
-## The Idea
+## The Problem
 
 Some days are dense. You're in back-to-back meetings, half-listening to a podcast on the way home, reading something interesting at midnight. You jot things down — a vendor name, a dosage your doctor mentioned, an idea that felt important at 2am.
 
@@ -72,11 +71,6 @@ Save a thought in seconds. Type it or say it out loud. Ask for it later in plain
 > *"Where did I say I wanted to travel next year?"*
 > *"What was the name of that vendor from the podcast?"*
 
-<div align="center">
-<img src="docs/screenshots/SecondBrain_MobileImage.jpeg" width="320" alt="Mobile UI showing Save Memory tab with voice input ready — responsive layout works on phone with zero setup">
-<br><em>Mobile — save a thought in seconds, voice input ready.</em>
-</div>
-
 Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves recall.**
 
 | | Traditional Notes App | Second Brain |
@@ -89,13 +83,18 @@ Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves
 | Sources cited with relevancy scores | ❌ | ✅ |
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_SaveMemory_Light.png" width="680" alt="Save Memory tab light mode — text input with 5000 char limit, voice input via Web Speech API, Save Memory button triggers HydraDB ingestion with indexing poll">
-<br><em>Save Memory — type or speak, then save. Indexing confirmed before response returns.</em>
+<img src="docs/screenshots/SecondBrain_MobileImage.jpeg" width="320" alt="Mobile UI showing Save Memory tab with voice input ready — responsive layout works on phone with zero setup">
+<br><em>Mobile — save a thought in seconds, voice input ready.</em>
+</div>
+
+<div align="center">
+<img src="docs/screenshots/SecondBrain_SaveMemory_Light.png" width="49%" alt="Save Memory tab light mode — text input with 5000 char limit, voice input via Web Speech API, Save Memory button triggers HydraDB ingestion with indexing poll">&nbsp;<img src="docs/screenshots/SecondBrain_AskQuestion_Light.png" width="49%" alt="Ask Question tab light mode — grounded answer panel and Retrieved Sources section showing HydraDB memory chunks with relevancy scores, answer strictly limited to saved memories">
+<br><em>Save Memory and Ask Question — light mode.</em>
 </div>
 
 **Who this is for:** knowledge workers drowning in scattered notes, students managing course material, anyone whose brain moves faster than their ability to find things later.
 
-**Why it stays cheap at scale:** Voice transcription uses the browser's built-in Web Speech API — zero cost at any volume. Storage and recall cost roughly $0.002 per interaction at current HydraDB and OpenAI pricing. At 10,000 daily active users the total infrastructure cost is approximately $1,300/month — comfortably covered by a $3/month subscription.
+**Can it scale?:** Voice transcription uses the browser's built-in Web Speech API — zero cost at any volume. Storage and recall cost roughly $0.002 per interaction at current HydraDB and OpenAI pricing. At 10,000 daily active users the total infrastructure cost is approximately $1,300/month — comfortably covered by a $3/month subscription!
 
 **The bigger vision:** Today you type or speak memories manually. That's the MVP constraint. The real destination is ambient capture — a wearable that passively records what you say, hear, and do, feeding the same recall engine automatically. You'd never think to save anything. You'd just ask. The hard problem was always retrieval, not capture. Second Brain solves retrieval first. The input layer is a detail.
 
@@ -117,11 +116,6 @@ Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves
 6. Confirm the answer references Austin — **Retrieved Sources** lists the matching memory chunk with a relevancy score
 
 > If recall is empty right after saving, wait ~10 seconds and ask again. HydraDB indexing can lag briefly on brand-new memories.
-
-<div align="center">
-<img src="docs/screenshots/SecondBrain_AskQuestion_Light.png" width="680" alt="Ask Question tab light mode — grounded answer panel and Retrieved Sources section showing HydraDB memory chunks with relevancy scores, answer strictly limited to saved memories">
-<br><em>Ask Question — grounded answer with cited memory chunks and relevancy scores.</em>
-</div>
 
 **MVP constraints:** Single-user · No auth · Text and voice input only
 
@@ -401,9 +395,5 @@ The speed that matters in a hackathon isn't typing speed. It's the time between 
 ---
 
 <div align="center">
-
-**Built for the Cursor Hackathon · Single-user MVP · No auth · Text and voice only**
-
-*[cursorers repo](https://github.com/cursorers) · [Live demo](https://second-brain-blue-eight.vercel.app/)*
-
+<img src="docs/screenshots/SecondBrain_Footer.svg" width="100%" alt="Second Brain — Built for the Cursor Hackathon · Powered by HydraDB and OpenAI gpt-4o-mini · Single-user MVP · No auth · MIT License">
 </div>

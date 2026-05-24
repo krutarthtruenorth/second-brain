@@ -1,84 +1,44 @@
-<svg width="100%" viewBox="0 0 680 180" role="img" xmlns="http://www.w3.org/2000/svg">
+<svg width="100%" viewBox="0 0 680 155" role="img" xmlns="http://www.w3.org/2000/svg">
   <title>Second Brain — Personal Knowledge</title>
-  <desc>Second Brain banner with animated brain icon, tagline, feature pills and tech badge strip</desc>
+  <desc>Second Brain banner with animated brain icon, tagline and feature pills</desc>
   <defs>
     <style>
-      @keyframes brainpulse {
-        0%,100%{r:32} 50%{r:35}
-      }
-      @keyframes brainfade {
-        0%{opacity:0;transform:scale(0.85)} 100%{opacity:1;transform:scale(1)}
-      }
-      @keyframes titleslide {
-        0%{opacity:0;transform:translateX(-18px)} 100%{opacity:1;transform:translateX(0)}
-      }
-      @keyframes subtitleslide {
-        0%{opacity:0;transform:translateX(-12px)} 100%{opacity:1;transform:translateX(0)}
-      }
-      @keyframes taglinefade {
-        0%{opacity:0} 100%{opacity:1}
-      }
-      @keyframes pill1fade {
-        0%,100%{opacity:0} 60%,90%{opacity:1}
-      }
-      @keyframes pill2fade {
-        0%,72%{opacity:0} 72%,100%{opacity:1}
-      }
-      @keyframes pill3fade {
-        0%,80%{opacity:0} 80%,100%{opacity:1}
-      }
-      @keyframes pill4fade {
-        0%,88%{opacity:0} 88%,100%{opacity:1}
-      }
-      @keyframes badgeup {
-        0%{opacity:0;transform:translateY(10px)} 100%{opacity:1;transform:translateY(0)}
-      }
-      @keyframes ringpulse {
-        0%,100%{opacity:0;r:36} 50%{opacity:0.35;r:42}
-      }
-
-      #braingroup {
-        animation: brainfade 0.7s ease-out forwards;
-      }
-      #braincircle {
-        animation: brainpulse 2.5s ease-in-out infinite;
-      }
-      #pulstring {
-        animation: ringpulse 2.5s ease-in-out infinite;
-      }
-      #title {
-        animation: titleslide 0.6s 0.3s ease-out both;
-      }
-      #subtitle {
-        animation: subtitleslide 0.6s 0.5s ease-out both;
-      }
-      #tagline {
-        animation: taglinefade 0.6s 0.7s ease-out both;
-      }
-      #pill1 { animation: pill1fade 1.2s 0.8s ease-out both; }
-      #pill2 { animation: pill2fade 1.2s 0.8s ease-out both; }
-      #pill3 { animation: pill3fade 1.2s 0.8s ease-out both; }
-      #pill4 { animation: pill4fade 1.2s 0.8s ease-out both; }
-      #badgestrip { animation: badgeup 0.5s 1.2s ease-out both; }
+      @keyframes brainpulse { 0%,100%{r:32} 50%{r:35} }
+      @keyframes brainfade { 0%{opacity:0;transform:scale(0.85)} 100%{opacity:1;transform:scale(1)} }
+      @keyframes titleslide { 0%{opacity:0;transform:translateX(-18px)} 100%{opacity:1;transform:translateX(0)} }
+      @keyframes subtitleslide { 0%{opacity:0;transform:translateX(-12px)} 100%{opacity:1;transform:translateX(0)} }
+      @keyframes taglinefade { 0%{opacity:0} 100%{opacity:1} }
+      @keyframes pill1fade { 0%,55%{opacity:0} 75%,100%{opacity:1} }
+      @keyframes pill2fade { 0%,65%{opacity:0} 80%,100%{opacity:1} }
+      @keyframes pill3fade { 0%,72%{opacity:0} 85%,100%{opacity:1} }
+      @keyframes pill4fade { 0%,80%{opacity:0} 92%,100%{opacity:1} }
+      @keyframes ringpulse { 0%,100%{opacity:0;r:36} 50%{opacity:0.3;r:43} }
+      #braingroup { animation: brainfade 0.7s ease-out forwards; }
+      #braincircle { animation: brainpulse 2.5s ease-in-out infinite; }
+      #pulstring { animation: ringpulse 2.5s ease-in-out infinite; }
+      #title { animation: titleslide 0.6s 0.3s ease-out both; }
+      #subtitle { animation: subtitleslide 0.6s 0.5s ease-out both; }
+      #tagline { animation: taglinefade 0.6s 0.7s ease-out both; }
+      #pill1 { animation: pill1fade 1s 0.5s ease-out both; }
+      #pill2 { animation: pill2fade 1s 0.5s ease-out both; }
+      #pill3 { animation: pill3fade 1s 0.5s ease-out both; }
+      #pill4 { animation: pill4fade 1s 0.5s ease-out both; }
     </style>
   </defs>
 
   <!-- Background -->
-  <rect width="680" height="180" fill="#FDF6EE" rx="12"/>
+  <rect width="680" height="155" fill="#FDF6EE" rx="12"/>
 
   <!-- Decorative circles -->
   <circle cx="620" cy="50" r="60" fill="#F5E6D3" opacity="0.5"/>
-  <circle cx="640" cy="130" r="40" fill="#FAEEDA" opacity="0.4"/>
-  <circle cx="60" cy="150" r="50" fill="#F5E6D3" opacity="0.3"/>
+  <circle cx="645" cy="130" r="38" fill="#FAEEDA" opacity="0.4"/>
+  <circle cx="55" cy="140" r="48" fill="#F5E6D3" opacity="0.3"/>
 
   <!-- Brain group -->
   <g id="braingroup">
-    <!-- Pulse ring behind circle -->
-    <circle id="pulstring" cx="72" cy="72" r="36" fill="none" stroke="#C97B3A" stroke-width="2" opacity="0"/>
-    <!-- Brain circle -->
-    <circle id="braincircle" cx="72" cy="72" r="32" fill="#C97B3A"/>
-    <!-- Brain icon -->
-    <g transform="translate(72,72)">
+    <circle id="pulstring" cx="72" cy="68" r="36" fill="none" stroke="#C97B3A" stroke-width="2" opacity="0"/>
+    <circle id="braincircle" cx="72" cy="68" r="32" fill="#C97B3A"/>
+    <g transform="translate(72,68)">
       <path d="M-2,-12 C-14,-12 -20,-6 -20,2 C-20,8 -16,13 -10,15 C-10,18 -8,20 -4,20 L-2,20 L-2,-12 Z" fill="white" opacity="0.9"/>
       <path d="M2,-12 C14,-12 20,-6 20,2 C20,8 16,13 10,15 C10,18 8,20 4,20 L2,20 L2,-12 Z" fill="white" opacity="0.9"/>
       <line x1="0" y1="-12" x2="0" y2="20" stroke="#C97B3A" stroke-width="1.5"/>
@@ -90,49 +50,29 @@
   </g>
 
   <!-- Title -->
-  <text id="title" font-family="Georgia,serif" font-size="36" font-weight="700" fill="#712B13" x="122" y="65" opacity="0">Second Brain</text>
+  <text id="title" font-family="Georgia,serif" font-size="36" font-weight="700" fill="#712B13" x="122" y="60" opacity="0">Second Brain</text>
 
   <!-- Subtitle -->
-  <text id="subtitle" font-family="Georgia,serif" font-size="12" font-weight="400" fill="#993C1D" letter-spacing="3" x="124" y="86" opacity="0">PERSONAL KNOWLEDGE</text>
+  <text id="subtitle" font-family="Georgia,serif" font-size="12" fill="#993C1D" letter-spacing="3" x="124" y="80" opacity="0">PERSONAL KNOWLEDGE</text>
 
   <!-- Tagline -->
-  <text id="tagline" font-family="Georgia,serif" font-size="14" font-style="italic" fill="#854F0B" x="124" y="112" opacity="0">Save a thought. Ask for it later.</text>
+  <text id="tagline" font-family="Georgia,serif" font-size="13" font-style="italic" fill="#854F0B" x="124" y="102" opacity="0">Save a thought. Ask for it later.</text>
 
   <!-- Feature pills -->
   <g id="pill1" opacity="0">
-    <rect x="124" y="124" width="110" height="22" rx="11" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
-    <text font-family="Georgia,serif" font-size="10" fill="#633806" x="179" y="139" text-anchor="middle">HydraDB-native</text>
+    <rect x="124" y="114" width="110" height="22" rx="11" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+    <text font-family="Georgia,serif" font-size="10" fill="#633806" x="179" y="129" text-anchor="middle">HydraDB-native</text>
   </g>
   <g id="pill2" opacity="0">
-    <rect x="242" y="124" width="84" height="22" rx="11" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
-    <text font-family="Georgia,serif" font-size="10" fill="#633806" x="284" y="139" text-anchor="middle">Voice input</text>
+    <rect x="242" y="114" width="84" height="22" rx="11" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+    <text font-family="Georgia,serif" font-size="10" fill="#633806" x="284" y="129" text-anchor="middle">Voice input</text>
   </g>
   <g id="pill3" opacity="0">
-    <rect x="334" y="124" width="118" height="22" rx="11" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
-    <text font-family="Georgia,serif" font-size="10" fill="#633806" x="393" y="139" text-anchor="middle">Grounded answers</text>
+    <rect x="334" y="114" width="118" height="22" rx="11" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+    <text font-family="Georgia,serif" font-size="10" fill="#633806" x="393" y="129" text-anchor="middle">Grounded answers</text>
   </g>
   <g id="pill4" opacity="0">
-    <rect x="460" y="124" width="110" height="22" rx="11" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
-    <text font-family="Georgia,serif" font-size="10" fill="#633806" x="515" y="139" text-anchor="middle">No hallucination</text>
-  </g>
-
-  <!-- Badge strip -->
-  <g id="badgestrip" opacity="0">
-    <rect x="0" y="154" width="680" height="26" fill="#C97B3A"/>
-    <text font-family="Georgia,serif" font-size="9" font-weight="700" fill="white" letter-spacing="1.5" x="40" y="171" text-anchor="middle">NEXT.JS 16</text>
-    <line x1="68" y1="158" x2="68" y2="176" stroke="white" stroke-width="0.5" opacity="0.4"/>
-    <text font-family="Georgia,serif" font-size="9" font-weight="700" fill="white" letter-spacing="1.5" x="118" y="171" text-anchor="middle">HYDRADB</text>
-    <line x1="148" y1="158" x2="148" y2="176" stroke="white" stroke-width="0.5" opacity="0.4"/>
-    <text font-family="Georgia,serif" font-size="9" font-weight="700" fill="white" letter-spacing="1.5" x="205" y="171" text-anchor="middle">OPENAI GPT-4O-MINI</text>
-    <line x1="258" y1="158" x2="258" y2="176" stroke="white" stroke-width="0.5" opacity="0.4"/>
-    <text font-family="Georgia,serif" font-size="9" font-weight="700" fill="white" letter-spacing="1.5" x="305" y="171" text-anchor="middle">TYPESCRIPT</text>
-    <line x1="338" y1="158" x2="338" y2="176" stroke="white" stroke-width="0.5" opacity="0.4"/>
-    <text font-family="Georgia,serif" font-size="9" font-weight="700" fill="white" letter-spacing="1.5" x="388" y="171" text-anchor="middle">TAILWIND CSS 4</text>
-    <line x1="428" y1="158" x2="428" y2="176" stroke="white" stroke-width="0.5" opacity="0.4"/>
-    <text font-family="Georgia,serif" font-size="9" font-weight="700" fill="white" letter-spacing="1.5" x="478" y="171" text-anchor="middle">VOICE INPUT</text>
-    <line x1="514" y1="158" x2="514" y2="176" stroke="white" stroke-width="0.5" opacity="0.4"/>
-    <text font-family="Georgia,serif" font-size="9" font-weight="700" fill="white" letter-spacing="1.5" x="570" y="171" text-anchor="middle">MIT LICENSE</text>
-    <line x1="610" y1="158" x2="610" y2="176" stroke="white" stroke-width="0.5" opacity="0.4"/>
-    <text font-family="Georgia,serif" font-size="9" font-weight="700" fill="white" letter-spacing="1.5" x="645" y="171" text-anchor="middle">FREE</text>
+    <rect x="460" y="114" width="110" height="22" rx="11" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+    <text font-family="Georgia,serif" font-size="10" fill="#633806" x="515" y="129" text-anchor="middle">No hallucination</text>
   </g>
 </svg>
