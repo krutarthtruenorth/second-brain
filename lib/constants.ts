@@ -5,3 +5,5 @@ export const RECALL_MAX_RESULTS = 6;
 export const RECALL_TAG_FILTER_MAX_RESULTS = 20;
 export const INDEXING_MAX_ATTEMPTS = 24;
 export const INDEXING_DELAY_MS = 1000;
+export const BRAIN_GRAPH_LIMIT = 250;
+export const BRAIN_SUPER_NODES_LIMIT = 20;

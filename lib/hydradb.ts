@@ -1,5 +1,7 @@
-import { HydraDBClient } from "@hydradb/sdk";
+import { HydraDBClient, HydraDBError } from "@hydradb/sdk";
 import {
+  BRAIN_GRAPH_LIMIT,
+  BRAIN_SUPER_NODES_LIMIT,
   INDEXING_DELAY_MS,
   INDEXING_MAX_ATTEMPTS,
   MAX_MEMORY_TAGS,
@@ -174,4 +176,68 @@ export async function searchMemories(
     score:
       typeof chunk.relevancy_score === "number" ? chunk.relevancy_score : null,
   }));
+}
+
+function emptyBrainGraphPayload() {
+  return {
+    relations: [],
+    superNodes: [],
+    nextCursor: null,
+    isTruncated: false,
+  };
+}
+
+function isRecoverableGraphError(error: unknown): boolean {
+  if (!(error instanceof HydraDBError)) {
+    return false;
+  }
+
+  // HydraDB may return 404/500 when the graph is not built yet or has no relations.
+  return error.statusCode === 404 || error.statusCode === 500;
+}
+
+export async function fetchBrainGraph(options?: {
+  sourceId?: string;
+  limit?: number;
+  cursor?: number | null;
+}) {
+  const client = createClient();
+  const tenantId = getTenantId();
+
+  const [relationsResult, superNodesResult] = await Promise.allSettled([
+    client.fetch.graphRelationsBySourceId({
+      tenant_id: tenantId,
+      sub_tenant_id: SUB_TENANT_ID,
+      is_memory: true,
+      source_id: options?.sourceId,
+      limit: options?.limit ?? BRAIN_GRAPH_LIMIT,
+      cursor: options?.cursor,
+    }),
+    client.graphHealth.getSuperNodes({
+      tenant_id: tenantId,
+      sub_tenant_id: SUB_TENANT_ID,
+      limit: BRAIN_SUPER_NODES_LIMIT,
+    }),
+  ]);
+
+  if (relationsResult.status === "rejected") {
+    if (isRecoverableGraphError(relationsResult.reason)) {
+      return emptyBrainGraphPayload();
+    }
+
+    throw relationsResult.reason;
+  }
+
+  const relationsResponse = relationsResult.value;
+  const superNodes =
+    superNodesResult.status === "fulfilled"
+      ? (superNodesResult.value.super_nodes ?? [])
+      : [];
+
+  return {
+    relations: relationsResponse.relations ?? [],
+    superNodes,
+    nextCursor: relationsResponse.next_cursor ?? null,
+    isTruncated: relationsResponse.is_truncated ?? false,
+  };
 }
