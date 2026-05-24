@@ -41,7 +41,7 @@
 
 <div align="center">
 
-<img src="docs/screenshots/SecondImage_BannerImage_.png" width="100%" alt="Second Brain — Personal Knowledge">
+<img src="docs/screenshots/SecondImage_BannerImage.png" width="100%" alt="Second Brain — Personal Knowledge">
 
 # 🧠 Second Brain
 ### *Save a thought. Ask for it later.*
@@ -71,7 +71,7 @@ Save a thought in seconds. Type it or say it out loud. Ask for it later in plain
 > *"What was the name of that vendor from the podcast?"*
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_MobileImage_.jpeg" width="320" alt="Second Brain on mobile — typing a quick note with voice input ready">
+<img src="docs/screenshots/SecondBrain_MobileImage.jpeg" width="320" alt="Second Brain on mobile — typing a quick note with voice input ready">
 <br><em>Mobile — save a thought in seconds, voice input ready.</em>
 </div>
 
