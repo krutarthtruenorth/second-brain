@@ -1,0 +1,77 @@
+<svg width="100%" viewBox="0 0 680 380" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>Second Brain save flow — indexing-aware memory ingestion</title>
+  <desc>User saves a memory, the server calls HydraDB addMemory, then polls verifyProcessing until indexing is confirmed before returning a response.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect width="680" height="380" fill="#FDF6EE" rx="12"/>
+
+  <!-- Title -->
+  <text font-family="Georgia, serif" font-size="13" fill="#712B13" x="340" y="36" text-anchor="middle" font-weight="700">Save flow — indexing-aware ingestion</text>
+
+  <!-- Step 1: User -->
+  <rect x="40" y="60" width="120" height="52" rx="10" fill="#FDF0E4" stroke="#C97B3A" stroke-width="0.5"/>
+  <text font-family="Georgia, serif" font-size="11" fill="#712B13" x="100" y="82" text-anchor="middle" font-weight="600">User types</text>
+  <text font-family="Georgia, serif" font-size="9" fill="#854F0B" x="100" y="100" text-anchor="middle">or speaks a memory</text>
+
+  <line x1="160" y1="86" x2="198" y2="86" stroke="#BA7517" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Step 2: POST -->
+  <rect x="200" y="60" width="130" height="52" rx="10" fill="#FDF0E4" stroke="#C97B3A" stroke-width="0.5"/>
+  <text font-family="Georgia, serif" font-size="11" fill="#712B13" x="265" y="78" text-anchor="middle" font-weight="600">POST</text>
+  <text font-family="Georgia, serif" font-size="10" fill="#993C1D" x="265" y="96" text-anchor="middle">/api/memories</text>
+  <text font-family="Georgia, serif" font-size="8" fill="#854F0B" x="265" y="108" text-anchor="middle">{ content: string }</text>
+
+  <line x1="330" y1="86" x2="368" y2="86" stroke="#BA7517" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Step 3: addMemory -->
+  <rect x="370" y="60" width="130" height="52" rx="10" fill="#E8F3EC" stroke="#3B6D11" stroke-width="0.5"/>
+  <text font-family="Georgia, serif" font-size="11" fill="#27500A" x="435" y="78" text-anchor="middle" font-weight="600">addMemory()</text>
+  <text font-family="Georgia, serif" font-size="9" fill="#3B6D11" x="435" y="96" text-anchor="middle">HydraDB ingest</text>
+  <text font-family="Georgia, serif" font-size="8" fill="#3B6D11" x="435" y="108" text-anchor="middle">infer: false</text>
+
+  <line x1="500" y1="86" x2="538" y2="86" stroke="#3B6D11" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Step 4: HydraDB -->
+  <rect x="540" y="60" width="100" height="52" rx="10" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <text font-family="Georgia, serif" font-size="11" fill="#27500A" x="590" y="82" text-anchor="middle" font-weight="600">HydraDB</text>
+  <text font-family="Georgia, serif" font-size="9" fill="#3B6D11" x="590" y="100" text-anchor="middle">Indexing...</text>
+
+  <!-- Poll loop box -->
+  <rect x="200" y="160" width="440" height="140" rx="12" fill="#FAEEDA" stroke="#BA7517" stroke-width="1" stroke-dasharray="6 3"/>
+  <text font-family="Georgia, serif" font-size="10" fill="#993C1D" x="420" y="183" text-anchor="middle" font-style="italic" font-weight="600">polling loop — up to ~12 seconds</text>
+
+  <!-- verifyProcessing -->
+  <rect x="220" y="194" width="150" height="52" rx="10" fill="#FDF0E4" stroke="#C97B3A" stroke-width="0.5"/>
+  <text font-family="Georgia, serif" font-size="10" fill="#712B13" x="295" y="214" text-anchor="middle" font-weight="600">verifyProcessing()</text>
+  <text font-family="Georgia, serif" font-size="9" fill="#854F0B" x="295" y="232" text-anchor="middle">check index status</text>
+
+  <line x1="370" y1="220" x2="408" y2="220" stroke="#BA7517" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Status check -->
+  <rect x="410" y="194" width="130" height="52" rx="10" fill="#FDF0E4" stroke="#C97B3A" stroke-width="0.5"/>
+  <text font-family="Georgia, serif" font-size="10" fill="#712B13" x="475" y="212" text-anchor="middle" font-weight="600">status?</text>
+  <text font-family="Georgia, serif" font-size="8" fill="#854F0B" x="475" y="228" text-anchor="middle">completed /</text>
+  <text font-family="Georgia, serif" font-size="8" fill="#854F0B" x="475" y="240" text-anchor="middle">graph_creation / success</text>
+
+  <!-- retry arrow -->
+  <path d="M475 246 L475 270 L295 270 L295 246" fill="none" stroke="#C97B3A" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <text font-family="Georgia, serif" font-size="9" fill="#993C1D" x="385" y="285" text-anchor="middle" font-style="italic">not ready yet → retry</text>
+
+  <!-- Down arrow from poll to response -->
+  <line x1="475" y1="246" x2="475" y2="316" stroke="#3B6D11" stroke-width="1" marker-end="url(#arrow)"/>
+  <text font-family="Georgia, serif" font-size="9" fill="#27500A" x="492" y="290" font-style="italic">ready</text>
+
+  <!-- Response -->
+  <rect x="340" y="318" width="270" height="44" rx="10" fill="#E8F3EC" stroke="#3B6D11" stroke-width="0.5"/>
+  <text font-family="Georgia, serif" font-size="11" fill="#27500A" x="475" y="338" text-anchor="middle" font-weight="600">{ sourceId, status: "completed" }</text>
+  <text font-family="Georgia, serif" font-size="9" fill="#3B6D11" x="475" y="354" text-anchor="middle">memory is now searchable</text>
+
+  <!-- Why this matters label -->
+  <text font-family="Georgia, serif" font-size="9" fill="#993C1D" x="100" y="290" text-anchor="middle" font-style="italic">most RAG stacks</text>
+  <text font-family="Georgia, serif" font-size="9" fill="#993C1D" x="100" y="304" text-anchor="middle" font-style="italic">fire-and-forget here</text>
+  <text font-family="Georgia, serif" font-size="9" fill="#993C1D" x="100" y="318" text-anchor="middle" font-style="italic">→ silent recall failure</text>
+</svg>
