@@ -11,13 +11,13 @@ const features = [
     icon: ShieldCheck,
     title: "Grounded answers",
     description: "Responses stay tied to retrieved sources.",
-    iconClassName: "bg-orange-100 text-orange-700",
+    iconClassName: "bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300",
   },
   {
     icon: Network,
     title: "Graph context",
     description: "See people, topics, and documents connect.",
-    iconClassName: "bg-amber-100 text-amber-700",
+    iconClassName: "bg-amber-100 text-amber-700 dark:bg-amber-400/15 dark:text-amber-200",
   },
 ] as const;
 

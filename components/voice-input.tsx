@@ -74,7 +74,7 @@ function StatePill({ state }: { state: VoiceState }) {
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
-        state === "listening" && "bg-red-50 text-red-700",
+        state === "listening" && "bg-red-50 text-red-700 dark:bg-orange-400/15 dark:text-orange-200",
         state === "processing" && "bg-primary/10 text-primary",
         state === "idle" && "bg-muted text-muted-foreground",
         state === "unsupported" && "bg-muted text-muted-foreground",
@@ -84,7 +84,7 @@ function StatePill({ state }: { state: VoiceState }) {
       <span
         className={cn(
           "size-1.5 rounded-full",
-          state === "listening" && "animate-pulse bg-red-500",
+          state === "listening" && "animate-pulse bg-red-500 dark:bg-orange-300",
           state === "processing" && "animate-pulse bg-primary",
           state === "idle" && "bg-muted-foreground",
           state === "unsupported" && "bg-muted-foreground",
@@ -294,14 +294,14 @@ export function VoiceInput({
           className={cn(
             "group flex flex-1 items-center gap-3 rounded-xl border border-border/70 bg-card p-3 text-left transition-all",
             "hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-            isListening && "border-red-200 bg-red-50/70 shadow-red-100",
+            isListening && "border-red-200 bg-red-50/70 shadow-red-100 dark:border-orange-300/30 dark:bg-orange-400/10 dark:shadow-none",
             "disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none",
           )}
         >
           <span
             className={cn(
               "flex size-11 shrink-0 items-center justify-center rounded-xl bg-icon-tint text-icon-tint-foreground transition-transform group-hover:scale-105",
-              isListening && "bg-red-100 text-red-600",
+              isListening && "bg-red-100 text-red-600 dark:bg-orange-400/15 dark:text-orange-200",
               isProcessing && "bg-primary/10 text-primary",
             )}
             aria-hidden

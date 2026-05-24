@@ -24,7 +24,7 @@ export function AppHeader() {
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <div className="hidden items-center gap-2 rounded-full border border-border/70 bg-card/80 px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm sm:flex">
-            <Circle className="size-2 fill-orange-500 text-orange-500" aria-hidden />
+            <Circle className="size-2 fill-orange-500 text-orange-500 dark:fill-orange-300 dark:text-orange-300" aria-hidden />
             Ready for demo
           </div>
           <ThemeToggle />
