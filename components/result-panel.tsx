@@ -5,10 +5,10 @@ import { BookOpen, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { MemorySource } from "@/lib/types";
+import type { MemorySource, WorkspaceMode } from "@/lib/types";
 
 type ResultPanelProps = {
-  mode: "save" | "ask";
+  mode: WorkspaceMode;
   isLoading: boolean;
   answer: string | null;
   sources: MemorySource[];

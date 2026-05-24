@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { MAX_MEMORY_TAGS } from "@/lib/constants";
 import { searchMemories } from "@/lib/hydradb";
+import { getQuestionForAnswer } from "@/lib/memory-content";
 import { generateGroundedAnswer } from "@/lib/openai";
 import type { ApiErrorResponse, AskResponse } from "@/lib/types";
 import { askQuestionSchema } from "@/lib/validation";
@@ -17,11 +19,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const sources = await searchMemories(parsed.data.question);
-    const answer = await generateGroundedAnswer(
+    const { questionForAnswer } = getQuestionForAnswer(
       parsed.data.question,
-      sources,
+      MAX_MEMORY_TAGS,
     );
+
+    const sources = await searchMemories(parsed.data.question);
+    const answer = await generateGroundedAnswer(questionForAnswer, sources);
 
     return NextResponse.json<AskResponse>({ answer, sources });
   } catch (error) {

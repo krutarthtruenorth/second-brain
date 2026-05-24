@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Brain,
   CircleHelp,
   ClipboardList,
   Loader2,
@@ -9,6 +10,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { BrainPanel } from "@/components/brain-panel";
 import { ResultPanel } from "@/components/result-panel";
 import { VoiceInput } from "@/components/voice-input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -17,16 +19,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { MAX_ASK_LENGTH, MAX_SAVE_LENGTH } from "@/lib/constants";
-import type { AskResponse, MemorySource, SaveMemoryResponse } from "@/lib/types";
+import type {
+  AskResponse,
+  MemorySource,
+  SaveMemoryResponse,
+  WorkspaceMode,
+} from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const tabTriggerClassName = cn(
   "flex-1 gap-2 rounded-none border-0 py-3.5 text-muted-foreground shadow-none",
   "data-active:bg-transparent data-active:text-primary dark:data-active:bg-transparent",
-  "data-active:after:h-1 data-active:after:bg-primary data-active:after:opacity-100"
+  "data-active:after:h-1 data-active:after:bg-primary data-active:after:opacity-100",
 );
-
-type Mode = "save" | "ask";
 
 type StatusState =
   | { type: "idle" }
@@ -35,22 +40,27 @@ type StatusState =
   | { type: "error"; message: string };
 
 export function MemoryInputCard() {
-  const [mode, setMode] = useState<Mode>("save");
+  const [mode, setMode] = useState<WorkspaceMode>("save");
   const [text, setText] = useState("");
   const [status, setStatus] = useState<StatusState>({ type: "idle" });
   const [answer, setAnswer] = useState<string | null>(null);
   const [sources, setSources] = useState<MemorySource[]>([]);
 
-  const isLoading = status.type === "loading";
+  const isInputMode = mode === "save" || mode === "ask";
+  const isLoading = status.type === "loading" && isInputMode;
   const maxLength = mode === "save" ? MAX_SAVE_LENGTH : MAX_ASK_LENGTH;
   const placeholder =
     mode === "save"
       ? "Type a note, idea, or fact you want to remember... Use #tags like #work #ideas"
-      : "Ask a question about your saved memories...";
+      : "Ask a question about your saved memories... Use #tags like #work to narrow results";
   const inputId = mode === "save" ? "memory-input" : "question-input";
   const inputLabel = mode === "save" ? "Memory text" : "Question text";
 
   function appendTranscript(transcript: string) {
+    if (!isInputMode) {
+      return;
+    }
+
     setText((current) => {
       const trimmed = current.trim();
       const next = trimmed ? `${trimmed} ${transcript}` : transcript;
@@ -144,7 +154,10 @@ export function MemoryInputCard() {
   function handlePrimaryAction() {
     if (mode === "save") {
       void handleSave();
-    } else {
+      return;
+    }
+
+    if (mode === "ask") {
       void handleAsk();
     }
   }
@@ -155,7 +168,7 @@ export function MemoryInputCard() {
         <Tabs
           value={mode}
           onValueChange={(value) => {
-            setMode(value as Mode);
+            setMode(value as WorkspaceMode);
             setStatus({ type: "idle" });
             resetResults();
           }}
@@ -173,72 +186,82 @@ export function MemoryInputCard() {
               <CircleHelp className="size-4" />
               Ask Question
             </TabsTrigger>
+            <TabsTrigger value="brain" className={tabTriggerClassName}>
+              <Brain className="size-4" />
+              Brain
+            </TabsTrigger>
           </TabsList>
 
           <CardContent className="space-y-4 pt-4 pb-6">
-            <div className="rounded-xl bg-cream-dark/80 p-3">
-              <Textarea
-                id={inputId}
-                aria-label={inputLabel}
-                placeholder={placeholder}
-                value={text}
-                onChange={(event) => setText(event.target.value)}
-                maxLength={maxLength}
-                rows={8}
-                disabled={isLoading}
-                className="min-h-44 resize-y border-0 bg-transparent px-1 py-2 shadow-none focus-visible:border-transparent focus-visible:ring-0 disabled:bg-transparent dark:bg-transparent dark:disabled:bg-transparent"
-              />
-              <div className="flex items-center justify-between gap-2 border-t border-border/50 pt-2">
-                <span
-                  className={cn(
-                    "text-xs tabular-nums text-muted-foreground",
-                    text.length >= maxLength && "text-destructive"
-                  )}
-                >
-                  {text.length} / {maxLength}
-                </span>
+            {mode === "brain" ? (
+              <BrainPanel />
+            ) : (
+              <>
+                <div className="rounded-xl bg-cream-dark/80 p-3">
+                  <Textarea
+                    id={inputId}
+                    aria-label={inputLabel}
+                    placeholder={placeholder}
+                    value={text}
+                    onChange={(event) => setText(event.target.value)}
+                    maxLength={maxLength}
+                    rows={8}
+                    disabled={isLoading}
+                    className="min-h-44 resize-y border-0 bg-transparent px-1 py-2 shadow-none focus-visible:border-transparent focus-visible:ring-0 disabled:bg-transparent dark:bg-transparent dark:disabled:bg-transparent"
+                  />
+                  <div className="flex items-center justify-between gap-2 border-t border-border/50 pt-2">
+                    <span
+                      className={cn(
+                        "text-xs tabular-nums text-muted-foreground",
+                        text.length >= maxLength && "text-destructive",
+                      )}
+                    >
+                      {text.length} / {maxLength}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setText("")}
+                      disabled={isLoading || text.length === 0}
+                      className="h-7 gap-1.5 text-muted-foreground"
+                    >
+                      <Trash2 className="size-3.5" />
+                      Clear
+                    </Button>
+                  </div>
+                </div>
+
+                <VoiceInput
+                  onTranscript={appendTranscript}
+                  disabled={isLoading}
+                />
+
                 <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setText("")}
-                  disabled={isLoading || text.length === 0}
-                  className="h-7 gap-1.5 text-muted-foreground"
+                  onClick={handlePrimaryAction}
+                  disabled={isLoading}
+                  className="w-full"
+                  size="lg"
                 >
-                  <Trash2 className="size-3.5" />
-                  Clear
+                  {isLoading ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : mode === "save" ? (
+                    <Save className="size-4" />
+                  ) : (
+                    <CircleHelp className="size-4" />
+                  )}
+                  {mode === "save" ? "Save Memory" : "Ask"}
                 </Button>
-              </div>
-            </div>
 
-            <VoiceInput
-              onTranscript={appendTranscript}
-              disabled={isLoading}
-            />
-
-            <Button
-              onClick={handlePrimaryAction}
-              disabled={isLoading}
-              className="w-full"
-              size="lg"
-            >
-              {isLoading ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : mode === "save" ? (
-                <Save className="size-4" />
-              ) : (
-                <CircleHelp className="size-4" />
-              )}
-              {mode === "save" ? "Save Memory" : "Ask"}
-            </Button>
-
-            {status.type !== "idle" ? (
-              <Alert
-                variant={status.type === "error" ? "destructive" : "default"}
-              >
-                <AlertDescription>{status.message}</AlertDescription>
-              </Alert>
-            ) : null}
+                {status.type !== "idle" ? (
+                  <Alert
+                    variant={status.type === "error" ? "destructive" : "default"}
+                  >
+                    <AlertDescription>{status.message}</AlertDescription>
+                  </Alert>
+                ) : null}
+              </>
+            )}
           </CardContent>
         </Tabs>
       </Card>

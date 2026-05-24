@@ -18,7 +18,13 @@ export const askQuestionSchema = z.object({
     .string()
     .trim()
     .min(1, "Question cannot be empty")
-    .max(MAX_ASK_LENGTH, "Question is too long"),
+    .max(MAX_ASK_LENGTH, "Question is too long")
+    .refine((raw) => {
+      const { content, tags } = parseMemoryContent(raw);
+      return content.length > 0 || tags.length > 0;
+    }, {
+      message: "Question cannot be empty",
+    }),
 });
 
 export type SaveMemoryInput = z.infer<typeof saveMemorySchema>;
