@@ -19,7 +19,9 @@ export function MainWorkspace() {
 
       <footer className="mx-auto flex w-full max-w-4xl shrink-0 items-center justify-center gap-1.5 px-4 pb-8 text-center text-xs text-muted-foreground sm:px-6">
         <Lock className="size-3.5 shrink-0" aria-hidden />
-        <span>Single-user MVP · No auth · Text and voice only</span>
+        <span>
+          Single-user demo · Fixed HydraDB sub-tenant · Text, Markdown, and audio
+        </span>
       </footer>
     </div>
   );
