@@ -150,8 +150,28 @@
   }
   body {
     @apply bg-background text-foreground;
+    background:
+      radial-gradient(circle at 20% 0%, oklch(0.93 0.07 62 / 0.72), transparent 34rem),
+      radial-gradient(circle at 90% 8%, oklch(0.9 0.06 42 / 0.42), transparent 28rem),
+      linear-gradient(180deg, oklch(0.99 0.014 78), oklch(0.955 0.026 72));
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .animate-wave {
+    animation: wave 1.05s ease-in-out infinite;
+  }
+
+  @keyframes wave {
+    0%,
+    100% {
+      transform: scaleY(0.35);
+    }
+    50% {
+      transform: scaleY(1);
+    }
   }
 }

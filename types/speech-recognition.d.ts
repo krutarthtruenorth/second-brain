@@ -6,12 +6,18 @@ interface SpeechRecognition extends EventTarget {
   stop(): void;
   abort(): void;
   onresult: ((event: SpeechRecognitionEvent) => void) | null;
-  onerror: ((event: Event) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onspeechstart: (() => void) | null;
   onend: (() => void) | null;
 }
 
 interface SpeechRecognitionEvent extends Event {
+  resultIndex: number;
   results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
 }
 
 interface SpeechRecognitionResultList {
@@ -22,6 +28,7 @@ interface SpeechRecognitionResultList {
 interface SpeechRecognitionResult {
   [index: number]: SpeechRecognitionAlternative;
   length: number;
+  isFinal: boolean;
 }
 
 interface SpeechRecognitionAlternative {
