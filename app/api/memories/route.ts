@@ -18,14 +18,20 @@ export async function POST(request: Request) {
 
     const { sourceId, status, tags } = await saveMemory(parsed.data.content);
 
+    const baseMessage =
+      tags.length > 0
+        ? `Memory saved with tags: ${tags.join(", ")}`
+        : "Memory saved successfully";
+    const message =
+      status === "queued"
+        ? `${baseMessage}. Still indexing — try asking again in ~30 seconds.`
+        : baseMessage;
+
     return NextResponse.json<SaveMemoryResponse>({
       sourceId,
       status,
       tags,
-      message:
-        tags.length > 0
-          ? `Memory saved with tags: ${tags.join(", ")}`
-          : "Memory saved successfully",
+      message,
     });
   } catch (error) {
     const message =

@@ -46,7 +46,7 @@ export function MemoryInputCard() {
   const placeholder =
     mode === "save"
       ? "Type a note, idea, or fact you want to remember... Use #tags like #work #ideas"
-      : "Ask a question about your saved memories...";
+      : "Ask a question about your saved memories... Use #tags like #work to narrow results";
   const inputId = mode === "save" ? "memory-input" : "question-input";
   const inputLabel = mode === "save" ? "Memory text" : "Question text";
 

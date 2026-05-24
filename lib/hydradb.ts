@@ -1,6 +1,16 @@
 import { HydraDBClient } from "@hydradb/sdk";
-import { MAX_MEMORY_TAGS } from "@/lib/constants";
-import { parseMemoryContent } from "@/lib/memory-content";
+import {
+  INDEXING_DELAY_MS,
+  INDEXING_MAX_ATTEMPTS,
+  MAX_MEMORY_TAGS,
+  RECALL_MAX_RESULTS,
+  RECALL_TAG_FILTER_MAX_RESULTS,
+} from "@/lib/constants";
+import {
+  formatIndexedMemoryText,
+  memoryMatchesTags,
+  parseMemoryContent,
+} from "@/lib/memory-content";
 import type { MemorySource } from "@/lib/types";
 
 const SUB_TENANT_ID = "mvp_user";
@@ -42,8 +52,8 @@ const READY_STATUSES = new Set([
 async function waitForIndexing(sourceId: string): Promise<string> {
   const client = createClient();
   const tenantId = getTenantId();
-  const maxAttempts = 12;
-  const delayMs = 1000;
+  const maxAttempts = INDEXING_MAX_ATTEMPTS;
+  const delayMs = INDEXING_DELAY_MS;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const response = await client.upload.verifyProcessing({
@@ -98,12 +108,14 @@ export async function saveMemory(rawContent: string): Promise<{
     additional_metadata.tags = tags;
   }
 
+  const indexedText = formatIndexedMemoryText(content, tags);
+
   const response = await client.upload.addMemory({
     tenant_id: tenantId,
     sub_tenant_id: SUB_TENANT_ID,
     memories: [
       {
-        text: content,
+        text: indexedText,
         infer: false,
         title: content.slice(0, 80) || "Memory",
         additional_metadata,
@@ -125,21 +137,37 @@ export async function saveMemory(rawContent: string): Promise<{
   };
 }
 
-export async function searchMemories(question: string): Promise<MemorySource[]> {
+export async function searchMemories(
+  rawQuestion: string,
+): Promise<MemorySource[]> {
+  const { content, tags } = parseMemoryContent(rawQuestion, MAX_MEMORY_TAGS);
+  const query = [content, ...tags].filter(Boolean).join(" ").trim();
+
   const client = createClient();
   const tenantId = getTenantId();
 
   const response = await client.recall.recallPreferences({
     tenant_id: tenantId,
     sub_tenant_id: SUB_TENANT_ID,
-    query: question,
-    max_results: 6,
+    query,
+    max_results:
+      tags.length > 0 ? RECALL_TAG_FILTER_MAX_RESULTS : RECALL_MAX_RESULTS,
     mode: "fast",
   });
 
-  const chunks = response.chunks ?? [];
+  let chunks = response.chunks ?? [];
 
-  return chunks.map((chunk) => ({
+  if (tags.length > 0) {
+    chunks = chunks.filter((chunk) =>
+      memoryMatchesTags(
+        chunk.additional_metadata?.tags,
+        chunk.chunk_content ?? "",
+        tags,
+      ),
+    );
+  }
+
+  return chunks.slice(0, RECALL_MAX_RESULTS).map((chunk) => ({
     sourceId: chunk.source_id ?? "unknown",
     title: chunk.source_title ?? null,
     content: chunk.chunk_content ?? "",

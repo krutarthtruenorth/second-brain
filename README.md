@@ -301,7 +301,7 @@ Errors return `{ "error": "message" }` with status `400` (validation) or `500` (
 
 #### `POST /api/memories`
 
-Saves a memory to HydraDB and waits briefly for indexing. Hashtags in `content` (e.g. `#conference`) are extracted into `additional_metadata.tags` and stripped from the stored text. Each memory gets `additional_metadata.created_at` (ISO-8601 UTC) at save time.
+Saves a memory to HydraDB and waits briefly for indexing. Hashtags in `content` (e.g. `#conference`) are extracted into `additional_metadata.tags` and stripped from the visible text. The indexed body also appends a searchable `Tags: …` line so tag-based recall works. Each memory gets `additional_metadata.created_at` (ISO-8601 UTC) at save time.
 
 ```bash
 curl -X POST http://localhost:3000/api/memories \
@@ -309,7 +309,7 @@ curl -X POST http://localhost:3000/api/memories \
   -d '{"content": "Met Alex in Austin #conference #networking"}'
 ```
 
-Stored text: `Met Alex in Austin`. Metadata tags: `conference`, `networking`.
+Stored text: `Met Alex in Austin`. Indexed body: `Met Alex in Austin\n\nTags: conference, networking`. Metadata tags: `conference`, `networking`.
 
 ```json
 {
@@ -324,10 +324,12 @@ Limit: 1–5000 characters. Returns `400` on validation error, `500` on server e
 
 #### `POST /api/ask`
 
+Hashtags in `question` (e.g. `#conference`) narrow recall to memories saved with those tags. Tags are stripped from the question text but included in the semantic query; matching checks the indexed `Tags: …` line and `additional_metadata.tags`.
+
 ```bash
 curl -X POST http://localhost:3000/api/ask \
   -H "Content-Type: application/json" \
-  -d '{"question": "Where did I meet Alex?"}'
+  -d '{"question": "#conference Where did I meet Alex?"}'
 ```
 
 ```json
