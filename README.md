@@ -43,7 +43,7 @@
 
 <div align="center">
 
-<img src="docs/screenshots/SecondImage_BannerImage.png" width="100%" alt="Second Brain — Personal Knowledge">
+<img src="docs/screenshots/SecondBrain_Banner.svg" width="100%" alt="Second Brain — personal memory recall app built on HydraDB and OpenAI. Save thoughts via text or voice, ask questions later, get grounded cited answers with no hallucination">
 
 # 🧠 Second Brain
 ### *Save a thought. Ask for it later.*
@@ -73,7 +73,7 @@ Save a thought in seconds. Type it or say it out loud. Ask for it later in plain
 > *"What was the name of that vendor from the podcast?"*
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_MobileImage.jpeg" width="320" alt="Second Brain on mobile — typing a quick note with voice input ready">
+<img src="docs/screenshots/SecondBrain_MobileImage.jpeg" width="320" alt="Mobile UI showing Save Memory tab with voice input ready — responsive layout works on phone with zero setup">
 <br><em>Mobile — save a thought in seconds, voice input ready.</em>
 </div>
 
@@ -89,7 +89,7 @@ Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves
 | Sources cited with relevancy scores | ❌ | ✅ |
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_SaveMemory_Light.png" width="680" alt="Save Memory tab — light mode">
+<img src="docs/screenshots/SecondBrain_SaveMemory_Light.png" width="680" alt="Save Memory tab light mode — text input with 5000 char limit, voice input via Web Speech API, Save Memory button triggers HydraDB ingestion with indexing poll">
 <br><em>Save Memory — type or speak, then save. Indexing confirmed before response returns.</em>
 </div>
 
@@ -100,7 +100,7 @@ Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves
 **The bigger vision:** Today you type or speak memories manually. That's the MVP constraint. The real destination is ambient capture — a wearable that passively records what you say, hear, and do, feeding the same recall engine automatically. You'd never think to save anything. You'd just ask. The hard problem was always retrieval, not capture. Second Brain solves retrieval first. The input layer is a detail.
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_Vision.svg" width="100%" alt="Second Brain vision — today vs future input layers, same recall engine">
+<img src="docs/screenshots/SecondBrain_Vision.svg" width="100%" alt="Vision diagram: today input is manual text and voice, future input is ambient wearable capture — the HydraDB recall engine is identical in both cases, proving the architecture scales beyond MVP">
 </div>
 
 ---
@@ -119,7 +119,7 @@ Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves
 > If recall is empty right after saving, wait ~10 seconds and ask again. HydraDB indexing can lag briefly on brand-new memories.
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_AskQuestion_Light.png" width="680" alt="Ask Question tab — answer with cited sources">
+<img src="docs/screenshots/SecondBrain_AskQuestion_Light.png" width="680" alt="Ask Question tab light mode — grounded answer panel and Retrieved Sources section showing HydraDB memory chunks with relevancy scores, answer strictly limited to saved memories">
 <br><em>Ask Question — grounded answer with cited memory chunks and relevancy scores.</em>
 </div>
 
@@ -158,7 +158,7 @@ flowchart TB
 **Stack:** Next.js 16 · React 19 · TypeScript 5 · Tailwind CSS 4 · shadcn/ui · HydraDB (`@hydradb/sdk`) · OpenAI `gpt-4o-mini` · Web Speech API · Zod · sonner · next-themes
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_SaveMemory_Dark.png" width="48%" alt="Save Memory — dark mode">&nbsp;&nbsp;<img src="docs/screenshots/SecondBrain_AskQuestion_Dark.png" width="48%" alt="Ask Question — dark mode">
+<img src="docs/screenshots/SecondBrain_SaveMemory_Dark.png" width="48%" alt="Save Memory tab dark mode — warm brown palette, voice input ready, character counter visible">&nbsp;&nbsp;<img src="docs/screenshots/SecondBrain_AskQuestion_Dark.png" width="48%" alt="Ask Question tab dark mode — Answer and Retrieved Sources panels ready, full light/dark theme toggle via next-themes">
 <br><em>Dark mode — theme persists across sessions via next-themes.</em>
 </div>
 
@@ -185,7 +185,7 @@ Browser
 Most RAG integrations fire-and-forget on save. If you query immediately, you get zero results — silently. Second Brain's `verifyProcessing` loop holds the response open until HydraDB confirms the memory is indexed and searchable. This eliminates silent recall failures at the cost of ~2–4 seconds of save latency. The tradeoff is worth it.
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_SaveFlow.svg" width="100%" alt="Save flow — indexing-aware memory ingestion">
+<img src="docs/screenshots/SecondBrain_SaveFlow.svg" width="100%" alt="Animated save flow diagram: User → POST /api/memories → addMemory() HydraDB ingest → polling loop calling verifyProcessing() until status is completed/success — blocks response until memory is searchable, eliminating silent recall failures">
 </div>
 
 ---
@@ -213,7 +213,7 @@ Browser
 The system prompt explicitly forbids GPT-4o-mini from drawing on its training data. If no relevant memory exists, it returns "I don't have a memory about that." It will not hallucinate. `temperature: 0.2` further constrains creative deviation for a recall task that demands precision over creativity.
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_AskFlow.svg" width="100%" alt="Ask flow — grounded recall with cited sources">
+<img src="docs/screenshots/SecondBrain_AskFlow.svg" width="100%" alt="Animated ask flow diagram: User question → POST /api/ask → recallPreferences() returns top 6 chunks with scores → GPT-4o-mini at temperature 0.2 answers strictly from retrieved context — system prompt forbids hallucination, returns cited sources">
 </div>
 
 ---
@@ -308,30 +308,16 @@ npm run dev
 
 ### API Reference
 
-- **Save**: `content` — 1–5000 characters
-- **Ask**: `question` — 1–2000 characters
-
-Errors return `{ "error": "message" }` with status `400` (validation) or `500` (server).
-
 #### `POST /api/memories`
-
-Saves a memory to HydraDB and waits briefly for indexing. Hashtags in `content` (e.g. `#conference`) are extracted into `additional_metadata.tags` and stripped from the stored text. Each memory gets `additional_metadata.created_at` (ISO-8601 UTC) at save time.
 
 ```bash
 curl -X POST http://localhost:3000/api/memories \
   -H "Content-Type: application/json" \
-  -d '{"content": "Met Alex in Austin #conference #networking"}'
+  -d '{"content": "Met Alex at the conference in Austin in March 2025."}'
 ```
 
-Stored text: `Met Alex in Austin`. Metadata tags: `conference`, `networking`.
-
 ```json
-{
-  "sourceId": "abc123",
-  "status": "completed",
-  "message": "Memory saved with tags: conference, networking",
-  "tags": ["conference", "networking"]
-}
+{ "sourceId": "abc123", "status": "completed", "message": "Memory saved successfully" }
 ```
 
 Limit: 1–5000 characters. Returns `400` on validation error, `500` on server error.
