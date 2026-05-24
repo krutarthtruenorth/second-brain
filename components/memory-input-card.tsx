@@ -5,6 +5,7 @@ import {
   Brain,
   CircleHelp,
   ClipboardList,
+  CornerDownRight,
   FileUp,
   Loader2,
   Save,
@@ -18,7 +19,6 @@ import { VoiceInput } from "@/components/voice-input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { MAX_ASK_LENGTH, MAX_SAVE_LENGTH } from "@/lib/constants";
 import type {
@@ -30,9 +30,8 @@ import type {
 import { cn } from "@/lib/utils";
 
 const tabTriggerClassName = cn(
-  "flex-1 gap-2 rounded-none border-0 py-3.5 text-muted-foreground shadow-none",
-  "data-active:bg-transparent data-active:text-primary dark:data-active:bg-transparent",
-  "data-active:after:h-1 data-active:after:bg-primary data-active:after:opacity-100",
+  "inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-medium text-muted-foreground transition-all sm:gap-2 sm:px-3 sm:text-sm",
+  "hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
 );
 
 const BrainPanel = dynamic(
@@ -182,47 +181,109 @@ export function MemoryInputCard() {
   }
 
   return (
-    <div className="flex w-full flex-col gap-6">
-      <Card className="gap-0 overflow-hidden rounded-2xl border-border/60 bg-card py-0 shadow-card">
-        <Tabs
-          value={mode}
-          onValueChange={(value) => {
-            setMode(value as WorkspaceMode);
-            setStatus({ type: "idle" });
-            resetResults();
-          }}
-          className="gap-0"
-        >
-          <TabsList
-            variant="line"
-            className="h-auto w-full justify-stretch gap-0 border-b border-border bg-transparent px-2"
+    <div className="flex w-full flex-col gap-5">
+      <Card className="gap-0 overflow-hidden rounded-3xl border-border/70 bg-card/85 py-0 shadow-card backdrop-blur">
+        <div className="border-b border-border/70 px-4 py-4 sm:px-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase text-primary">Workspace</p>
+              <h2 className="mt-1 text-xl font-semibold tracking-tight text-foreground">
+                Capture, ask, and explore
+              </h2>
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-xs font-medium text-muted-foreground">
+              <CornerDownRight className="size-3.5 text-primary" aria-hidden />
+              {status.type === "loading" ? status.message : "Ready"}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div
+            className="mx-4 mt-4 grid h-auto w-auto grid-cols-4 justify-stretch gap-1 rounded-2xl bg-muted/70 p-1 sm:mx-5"
+            role="tablist"
+            aria-label="Workspace mode"
           >
-            <TabsTrigger value="save" className={tabTriggerClassName}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "save"}
+              onClick={() => {
+                setMode("save");
+                setStatus({ type: "idle" });
+                resetResults();
+              }}
+              className={cn(
+                tabTriggerClassName,
+                mode === "save" && "bg-card text-foreground shadow-sm",
+              )}
+            >
               <ClipboardList className="size-4" />
-              Save Memory
-            </TabsTrigger>
-            <TabsTrigger value="ask" className={tabTriggerClassName}>
+              <span className="sm:hidden">Save</span>
+              <span className="hidden sm:inline">Save Memory</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "ask"}
+              onClick={() => {
+                setMode("ask");
+                setStatus({ type: "idle" });
+                resetResults();
+              }}
+              className={cn(
+                tabTriggerClassName,
+                mode === "ask" && "bg-card text-foreground shadow-sm",
+              )}
+            >
               <CircleHelp className="size-4" />
-              Ask Question
-            </TabsTrigger>
-            <TabsTrigger value="upload" className={tabTriggerClassName}>
+              <span className="sm:hidden">Ask</span>
+              <span className="hidden sm:inline">Ask Question</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "upload"}
+              onClick={() => {
+                setMode("upload");
+                setStatus({ type: "idle" });
+                resetResults();
+              }}
+              className={cn(
+                tabTriggerClassName,
+                mode === "upload" && "bg-card text-foreground shadow-sm",
+              )}
+            >
               <FileUp className="size-4" />
               Upload
-            </TabsTrigger>
-            <TabsTrigger value="brain" className={tabTriggerClassName}>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "brain"}
+              onClick={() => {
+                setMode("brain");
+                setStatus({ type: "idle" });
+                resetResults();
+              }}
+              className={cn(
+                tabTriggerClassName,
+                mode === "brain" && "bg-card text-foreground shadow-sm",
+              )}
+            >
               <Brain className="size-4" />
-              Brain
-            </TabsTrigger>
-          </TabsList>
+              <span className="sm:hidden">Graph</span>
+              <span className="hidden sm:inline">Brain</span>
+            </button>
+          </div>
 
-          <CardContent className="space-y-4 pt-4 pb-6">
+          <CardContent className="space-y-4 px-4 pt-4 pb-5 sm:px-5">
             {mode === "brain" ? (
               <BrainPanel />
             ) : mode === "upload" ? (
               <UploadPanel />
             ) : (
               <>
-                <div className="rounded-xl bg-cream-dark/80 p-3">
+                <div className="rounded-2xl border border-border/70 bg-background/80 p-3 shadow-inner">
                   <Textarea
                     id={inputId}
                     aria-label={inputLabel}
@@ -232,7 +293,7 @@ export function MemoryInputCard() {
                     maxLength={maxLength}
                     rows={8}
                     disabled={isLoading}
-                    className="min-h-44 resize-y border-0 bg-transparent px-1 py-2 shadow-none focus-visible:border-transparent focus-visible:ring-0 disabled:bg-transparent dark:bg-transparent dark:disabled:bg-transparent"
+                    className="min-h-48 resize-y border-0 bg-transparent px-1 py-2 text-base leading-7 shadow-none placeholder:text-muted-foreground/75 focus-visible:border-transparent focus-visible:ring-0 disabled:bg-transparent dark:bg-transparent dark:disabled:bg-transparent"
                   />
                   <div className="flex items-center justify-between gap-2 border-t border-border/50 pt-2">
                     <span
@@ -265,7 +326,7 @@ export function MemoryInputCard() {
                 <Button
                   onClick={handlePrimaryAction}
                   disabled={isLoading}
-                  className="w-full"
+                  className="h-11 w-full rounded-xl shadow-lg shadow-primary/15"
                   size="lg"
                 >
                   {isLoading ? (
@@ -275,7 +336,7 @@ export function MemoryInputCard() {
                   ) : (
                     <CircleHelp className="size-4" />
                   )}
-                  {mode === "save" ? "Save Memory" : "Ask"}
+                  {mode === "save" ? "Save to Second Brain" : "Ask Second Brain"}
                 </Button>
 
                 {status.type !== "idle" ? (
@@ -288,7 +349,7 @@ export function MemoryInputCard() {
               </>
             )}
           </CardContent>
-        </Tabs>
+        </div>
       </Card>
 
       <ResultPanel

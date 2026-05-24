@@ -24,9 +24,9 @@ function PanelHeader({
   description: string;
 }) {
   return (
-    <div className="flex items-start gap-3 border-b border-border/60 px-4 pt-5 pb-4 sm:px-6">
+    <div className="flex items-start gap-3 border-b border-border/70 px-4 pt-5 pb-4 sm:px-5">
       <div
-        className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
+        className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
         aria-hidden
       >
         <Icon className="size-4" />
@@ -54,16 +54,16 @@ export function ResultPanel({
 
   return (
     <div className="flex flex-col gap-6">
-      <Card className="gap-0 overflow-hidden rounded-2xl border-border/60 bg-card py-0 shadow-card">
+      <Card className="gap-0 overflow-hidden rounded-3xl border-border/70 bg-card/85 py-0 shadow-card backdrop-blur">
         <PanelHeader
           icon={Sparkles}
           title="Answer"
           description="Grounded response from your saved memories."
         />
-        <CardContent className="px-4 pt-4 pb-6 sm:px-6">
+        <CardContent className="px-4 pt-4 pb-5 sm:px-5">
           {isLoading ? (
             <div
-              className="space-y-2 rounded-xl bg-cream-dark/80 p-4"
+              className="space-y-2 rounded-2xl bg-muted/70 p-4"
               aria-live="polite"
               aria-busy="true"
             >
@@ -72,7 +72,7 @@ export function ResultPanel({
               <Skeleton className="h-4 w-2/3" />
             </div>
           ) : hasAnswer ? (
-            <div className="rounded-xl bg-cream-dark/80 p-4">
+            <div className="rounded-2xl border border-border/70 bg-background/85 p-4">
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
                 {answer}
               </p>
@@ -85,13 +85,13 @@ export function ResultPanel({
         </CardContent>
       </Card>
 
-      <Card className="gap-0 overflow-hidden rounded-2xl border-border/60 bg-card py-0 shadow-card">
+      <Card className="gap-0 overflow-hidden rounded-3xl border-border/70 bg-card/85 py-0 shadow-card backdrop-blur">
         <PanelHeader
           icon={BookOpen}
           title="Retrieved Sources"
           description="Memory chunks used to generate the answer."
         />
-        <CardContent className="space-y-3 px-4 pt-4 pb-6 sm:px-6">
+        <CardContent className="space-y-3 px-4 pt-4 pb-5 sm:px-5">
           {isLoading ? (
             <div className="space-y-3" aria-live="polite" aria-busy="true">
               <Skeleton className="h-20 w-full rounded-xl" />
@@ -101,7 +101,7 @@ export function ResultPanel({
             sources.map((source, index) => (
               <article
                 key={`${source.sourceId}-${index}`}
-                className="rounded-xl border border-border/60 bg-cream-dark/50 p-4"
+                className="rounded-2xl border border-border/70 bg-background/80 p-4 transition-all hover:border-primary/25 hover:shadow-sm"
               >
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <Badge
