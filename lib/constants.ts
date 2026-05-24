@@ -1,6 +1,10 @@
 export const MAX_SAVE_LENGTH = 5000;
 export const MAX_ASK_LENGTH = 2000;
 export const MAX_MEMORY_TAGS = 20;
+export const MAX_MARKDOWN_FILE_BYTES = 2 * 1024 * 1024;
+export const MAX_AUDIO_FILE_BYTES = 25 * 1024 * 1024;
+export const DEFAULT_OPENAI_ANSWER_MODEL = "gpt-5.4-mini";
+export const DEFAULT_OPENAI_TRANSCRIBE_MODEL = "gpt-4o-mini-transcribe";
 export const RECALL_MAX_RESULTS = 6;
 export const RECALL_TAG_FILTER_MAX_RESULTS = 20;
 export const INDEXING_MAX_ATTEMPTS = 24;
