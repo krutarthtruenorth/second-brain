@@ -82,7 +82,7 @@ Second Brain is not a notes app. Notes apps solve storage. **Second Brain solves
 | Sources cited with relevancy scores | ❌ | ✅ |
 
 <div align="center">
-<img src="docs/screenshots/SecondBrain_SaveMemory_Light.png" width="49%" alt="Save Memory tab light mode — text input with 5000 char limit, voice input via Web Speech API, Save Memory button triggers HydraDB ingestion with indexing poll">&nbsp;<img src="docs/screenshots/SecondBrain_AskQuestion_Light.png" width="49%" alt="Ask Question tab light mode — grounded answer panel and Retrieved Sources section showing HydraDB memory chunks with relevancy scores, answer strictly limited to saved memories">
+<img src="docs/screenshots/MainIdea_LightMode.png" width="100%" alt="Workspace light mode — Save Memory tab with text input, voice waveform input with Idle status and Listen button, 5000 char limit, Save to Second Brain button — shows full capture flow before submission">
 <br><em>Save Memory and Ask Question — light mode.</em>
 </div>
 
