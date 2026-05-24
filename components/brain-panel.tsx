@@ -179,7 +179,7 @@ export function BrainPanel() {
       <div className="grid gap-4 xl:grid-cols-[1fr_240px]">
         <div
           ref={containerRef}
-          className="h-[min(62vh,520px)] min-h-96 overflow-hidden rounded-2xl border border-border/70 bg-[radial-gradient(circle_at_center,oklch(0.955_0.045_68),oklch(0.995_0.012_80))]"
+          className="h-[min(62vh,520px)] min-h-96 overflow-hidden rounded-2xl border border-border/70 bg-[radial-gradient(circle_at_center,oklch(0.955_0.045_68),oklch(0.995_0.012_80))] dark:bg-[radial-gradient(circle_at_center,oklch(0.25_0.035_58),oklch(0.15_0.012_65))]"
         >
         <ForceGraph2D
           width={dimensions.width}
